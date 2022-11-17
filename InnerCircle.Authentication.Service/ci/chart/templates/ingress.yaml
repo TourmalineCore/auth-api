@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "chart.fullname" . }}-ingress
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: "/auth/$2"
+spec:
+  tls:
+    - hosts:
+        - {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}
+      secretName: {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}-tls
+  rules:
+  - host: {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ template "chart.fullname" . }}-service
+            port:
+              number: 80
+        path: /api/auth(/|$)(.*)
+        pathType: Prefix

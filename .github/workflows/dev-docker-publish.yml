@@ -1,0 +1,45 @@
+  name: Push docker image to Azure registry and deploy image to Azure to dev
+
+  on:
+    push:
+      branches:
+        - develop
+
+      tags:
+        - v*
+
+    pull_request:
+
+  env:
+    GUTHUB_REGISTRY: ghcr.io
+
+  jobs:
+    deploy-to-dev-k8s:
+      name: Deploy service to k8s for development environment
+      if: github.event_name == 'push'
+      runs-on: ubuntu-18.04
+
+      steps:
+        - name: checkout 
+          uses: actions/checkout@v1
+        - name: Build and push image
+          run: |
+              docker login ${{ env.GUTHUB_REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GH_REGISTRY_TOKEN }}
+              docker build -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:latest -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:${{ github.sha }} -f Dockerfile .
+              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:latest
+              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:${{ github.sha }}
+        - name: Deploy
+          uses: WyriHaximus/github-action-helm3@v2
+          with:
+            exec: helm upgrade --namespace inner-circle --create-namespace inner-circle --install auth-api 
+                    --set "aspnetcoreEnvironment=Development"
+                    --set "ingress.host"=${{ secrets.HOST }}
+                    --set "deployment.appsettings.ConnectionStrings.DefaultConnection=${{ secrets.POSTGRESQLCONNECTIONSTRING }}"
+                    --set "deployment.appsettings.AuthenticationOptions.PublicSigningKey=${{ secrets.AUTHPUBLICSIGNINGKEY }}"
+                    --set "deployment.appsettings.AuthenticationOptions.PrivateSigningKey=${{ secrets.AUTHPRIVATESIGNINGKEY }}"
+                    --set "imageCredentials.username=${{ github.actor }}" 
+                    --set "imageCredentials.password=${{ secrets.GH_REGISTRY_TOKEN }}" 
+                    --set "image.tag=${{ github.sha }}"
+                    --set "image.pullPolicy=Always"
+                    ./TourmalineCore.Authentication.Service/ci/chart
+            kubeconfig: '${{ secrets.KUBECONFIG }}'
