@@ -8,10 +8,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: "/auth/$2"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}
-      secretName: {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}-tls
+#  tls:
+#    - hosts:
+#        - {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}
+#      secretName: {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}-tls
   rules:
   - host: {{ required ".Values.ingress.host must be defined!" .Values.ingress.host }}
     http:
