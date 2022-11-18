@@ -8,7 +8,7 @@ deployment:
 replicaCount: 1
 
 image:
-  repository: ghcr.io/tourmalinecore/innercircle/auth
+  repository: ghcr.io/tourmalinecore/inner-circle/auth
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag:
