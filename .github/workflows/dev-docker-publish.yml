@@ -31,7 +31,7 @@
         - name: Deploy
           uses: WyriHaximus/github-action-helm3@v2
           with:
-            exec: helm upgrade --namespace inner-circle --create-namespace inner-circle --install auth-api 
+            exec: helm upgrade --namespace inner-circle --create-namespace --install auth-api 
                     --set "aspnetcoreEnvironment=Development"
                     --set "ingress.host"=${{ secrets.HOST }}
                     --set "deployment.appsettings.ConnectionStrings.DefaultConnection=${{ secrets.POSTGRESQLCONNECTIONSTRING }}"
