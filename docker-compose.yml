@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  db-debug:
+    image: postgres:14.2-alpine
+    restart: always
+    container_name: 'db-debug'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: TCAuthDebug
+    ports:
+      - 5432:5432
