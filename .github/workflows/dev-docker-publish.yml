@@ -1,4 +1,4 @@
-  name: Push docker image to Azure registry and deploy image to Azure to dev
+  name: deploy service to dev k8s
 
   on:
     push:

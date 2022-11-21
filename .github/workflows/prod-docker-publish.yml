@@ -1,51 +1,45 @@
-# name: Push docker image to Azure registry and deploy image to Azure to prod
+  name: deploy service to prod k8s
 
-# on:
-#   push:
-#     branches:
-#       - master
+  on:
+    push:
+      branches:
+        - master
 
-#     tags:
-#       - v*
+      tags:
+        - v*
 
-#   pull_request:
+    pull_request:
 
-# env:
-#   AZURE_WEB_APP_NAME: fa-admin-api-prod
-#   IMAGE_NAME: adminpanelapi
-#   IMAGE_ID: adminpanelapi
-#   AZURE_WEB_APP_URL: https://fa-admin-api-prod.azurewebsites.net
-#   AZURE_REGISTRY: fadockerregistry.azurecr.io
+  env:
+    GUTHUB_REGISTRY: ghcr.io
 
-# jobs:
-#   docker-push:
-#     runs-on: ubuntu-18.04
-#     if: github.event_name == 'push'
+  jobs:
+    deploy-to-dev-k8s:
+      name: Deploy service to k8s for production environment
+      if: github.event_name == 'push'
+      runs-on: ubuntu-20.04
 
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - uses: azure/docker-login@v1
-#         with:
-#           login-server: ${{ env.AZURE_REGISTRY }}
-#           username: ${{ secrets.PROD_AZURE_REGISTRY_LOGIN }}
-#           password: ${{ secrets.PROD_AZURE_REGISTRY_PASSWORD }}
-#       - run: |
-#             VERSION=${{ github.sha }}
-#             docker image ls -a
-#             docker build . --file Api/Dockerfile --tag $IMAGE_NAME
-#             docker tag $IMAGE_NAME $AZURE_REGISTRY/$IMAGE_ID:$VERSION
-#             docker push $AZURE_REGISTRY/$IMAGE_ID:$VERSION
-
-#   deploy-to-prod-azure:
-#     needs: docker-push
-#     name: Deploy App to Azure for production environment
-#     runs-on: ubuntu-18.04
-
-#     steps:
-#       - name: Run Azure webapp deploy action using publish profile credentials
-#         uses: azure/webapps-deploy@v2
-#         with:
-#           app-name: ${{ env.AZURE_WEB_APP_NAME }}
-#           publish-profile: ${{ secrets.PROD_AZURE_WEBAPP_PUBLISH_PROFILE }}
-#           images: "${{ env.AZURE_REGISTRY }}/${{ env.IMAGE_ID }}:${{ github.sha }}"
+      steps:
+        - name: checkout 
+          uses: actions/checkout@v1
+        - name: Build and push image
+          run: |
+              docker login ${{ env.GUTHUB_REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GH_REGISTRY_TOKEN }}
+              docker build -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:latest -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:${{ github.sha }} -f InnerCircle.Authentication.Service/Dockerfile .
+              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:latest
+              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:${{ github.sha }}
+        - name: Deploy
+          uses: WyriHaximus/github-action-helm3@v2
+          with:
+            exec: helm upgrade --namespace prod-inner-circle --create-namespace --install prod-auth-api 
+                    --set "aspnetcoreEnvironment=Production"
+                    --set "ingress.host"=${{ secrets.PROD_HOST }}
+                    --set "deployment.appsettings.ConnectionStrings.DefaultConnection=${{ secrets.PROD_POSTGRESQLCONNECTIONSTRING }}"
+                    --set "deployment.appsettings.AuthenticationOptions.PublicSigningKey=${{ secrets.PROD_AUTHPUBLICSIGNINGKEY }}"
+                    --set "deployment.appsettings.AuthenticationOptions.PrivateSigningKey=${{ secrets.PROD_AUTHPRIVATESIGNINGKEY }}"
+                    --set "imageCredentials.username=${{ github.actor }}" 
+                    --set "imageCredentials.password=${{ secrets.GH_REGISTRY_TOKEN }}" 
+                    --set "image.tag=${{ github.sha }}"
+                    --set "image.pullPolicy=Always"
+                    ./InnerCircle.Authentication.Service/ci/chart
+            kubeconfig: '${{ secrets.PROD_KUBECONFIG }}'
