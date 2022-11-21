@@ -8,6 +8,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: TCAuthDebug
+      POSTGRES_DB: inner-circle-db-debug
     ports:
       - 5432:5432
