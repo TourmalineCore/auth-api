@@ -25,21 +25,21 @@
         - name: Build and push image
           run: |
               docker login ${{ env.GUTHUB_REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GH_REGISTRY_TOKEN }}
-              docker build -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:latest -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:${{ github.sha }} -f InnerCircle.Authentication.Service/Dockerfile .
-              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:latest
-              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/auth:${{ github.sha }}
+              docker build -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:latest -t $GUTHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:${{ github.sha }} -f InnerCircle.Authentication.Service/Dockerfile .
+              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:latest
+              docker push $GUTHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:${{ github.sha }}
         - name: Deploy
           uses: WyriHaximus/github-action-helm3@v2
           with:
-            exec: helm upgrade --namespace inner-circle --create-namespace --install auth-api 
+            exec: helm upgrade --namespace dev-inner-circle --create-namespace --install dev-auth-api 
                     --set "aspnetcoreEnvironment=Development"
-                    --set "ingress.host"=${{ secrets.HOST }}
-                    --set "deployment.appsettings.ConnectionStrings.DefaultConnection=${{ secrets.POSTGRESQLCONNECTIONSTRING }}"
-                    --set "deployment.appsettings.AuthenticationOptions.PublicSigningKey=${{ secrets.AUTHPUBLICSIGNINGKEY }}"
-                    --set "deployment.appsettings.AuthenticationOptions.PrivateSigningKey=${{ secrets.AUTHPRIVATESIGNINGKEY }}"
+                    --set "ingress.host"=${{ secrets.DEV_HOST }}
+                    --set "deployment.appsettings.ConnectionStrings.DefaultConnection=${{ secrets.DEV_POSTGRESQLCONNECTIONSTRING }}"
+                    --set "deployment.appsettings.AuthenticationOptions.PublicSigningKey=${{ secrets.DEV_AUTHPUBLICSIGNINGKEY }}"
+                    --set "deployment.appsettings.AuthenticationOptions.PrivateSigningKey=${{ secrets.DEV_AUTHPRIVATESIGNINGKEY }}"
                     --set "imageCredentials.username=${{ github.actor }}" 
                     --set "imageCredentials.password=${{ secrets.GH_REGISTRY_TOKEN }}" 
                     --set "image.tag=${{ github.sha }}"
                     --set "image.pullPolicy=Always"
                     ./InnerCircle.Authentication.Service/ci/chart
-            kubeconfig: '${{ secrets.KUBECONFIG }}'
+            kubeconfig: '${{ secrets.DEV_KUBECONFIG }}'
