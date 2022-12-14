@@ -106,7 +106,6 @@ builder.Services
 
 
 builder.Services.AddSingleton<AuthCallbacks>();
-builder.Services.AddSingleton<RegisterCallbacks>();
 builder.Services.AddTransient<IUserQuery, UserQuery>();
 
 
