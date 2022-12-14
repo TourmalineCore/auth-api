@@ -4,11 +4,12 @@ using Data;
 using Data.Models;
 using Data.Queries;
 using InnerCircle.Authentication.Service.Services.Callbacks;
+using InnerCircle.Authentication.Service.Services.Middlewares;
+using InnerCircle.Authentication.Service.Services.Models;
 using InnerCircle.Authentication.Service.Services.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.EventLog;
 using TourmalineCore.AspNetCore.JwtAuthentication.Core;
-using TourmalineCore.AspNetCore.JwtAuthentication.Core.Models.Request;
 using TourmalineCore.AspNetCore.JwtAuthentication.Core.Options;
 using TourmalineCore.AspNetCore.JwtAuthentication.Identity;
 using TourmalineCore.AspNetCore.JwtAuthentication.Identity.Options;
@@ -100,10 +101,12 @@ builder.Services
     // use credentials validator if you have additional validations
     //.AddUserCredentialsValidator<UserCredentialsValidator>()
     .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType)
-    .AddRegistration();
+    .AddRegistration<RegistrationModel>();
+
 
 
 builder.Services.AddSingleton<AuthCallbacks>();
+builder.Services.AddSingleton<RegisterCallbacks>();
 builder.Services.AddTransient<IUserQuery, UserQuery>();
 
 
@@ -129,6 +132,7 @@ using var serviceScope = app.Services.CreateScope();
 app
     .OnLoginExecuting(serviceScope.ServiceProvider.GetRequiredService<AuthCallbacks>().OnLoginExecuting)
     .OnLoginExecuted(serviceScope.ServiceProvider.GetRequiredService<AuthCallbacks>().OnLoginExecuted)
+    
     .UseDefaultLoginMiddleware(new LoginEndpointOptions
         {
             LoginEndpointRoute = "/auth/login"
@@ -144,15 +148,18 @@ app
             LogoutEndpointRoute = "/auth/logout"
         }
     )
-    .UseRegistration<User, long, RegistrationRequestModel>(x => new User
+    .UseMiddleware<SetPasswordMiddleware>()
+    .UseRegistration<User, long, RegistrationModel>(x => new User
         {
             UserName = x.Login,
             NormalizedUserName = x.Login,
+            Code = x.Code
         },
         new RegistrationEndpointOptions
         {
             RegistrationEndpointRoute = "/auth/register"
-        });
+        })
+    ;
 
 if (!app.Environment.IsEnvironment("Tests"))
 {
