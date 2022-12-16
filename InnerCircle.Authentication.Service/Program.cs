@@ -83,7 +83,7 @@ builder.Host.ConfigureLogging((hostingContext, logging) =>
 
 });
 
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Tests")
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Tests") 
     builder
         .Services.AddDbContext<AppDbContext>(options =>
             {
@@ -147,12 +147,12 @@ app
             LogoutEndpointRoute = "/auth/logout"
         }
     )
-    .UseMiddleware<SetPasswordMiddleware>()
+    .UseMiddleware<GeneratePasswordMiddleware>()
     .UseRegistration<User, long, RegistrationModel>(x => new User
         {
             UserName = x.Login,
             NormalizedUserName = x.Login,
-            Code = x.Code
+            UserUniqueIdentificator = x.Code
         },
         new RegistrationEndpointOptions
         {

@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 
 namespace InnerCircle.Authentication.Service.Services.Middlewares
 {
-    public class SetPasswordMiddleware
+    public class GeneratePasswordMiddleware
     {
         private RequestDelegate _next;
-        public SetPasswordMiddleware(RequestDelegate next)
+        public GeneratePasswordMiddleware(RequestDelegate next)
         {
             _next = next;
         }

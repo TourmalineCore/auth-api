@@ -35,7 +35,7 @@ namespace Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Code")
+                    b.Property<string>("UserUniqueIdentificator")
                         .IsRequired()
                         .HasColumnType("text");
 
