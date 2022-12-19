@@ -1,9 +1,11 @@
-﻿using TourmalineCore.AspNetCore.JwtAuthentication.Core.Models.Request;
-
-namespace InnerCircle.Authentication.Service.Services.Models
+﻿namespace InnerCircle.Authentication.Service.Services.Models
 {
-    public class RegistrationModel : RegistrationRequestModel
+    public class RegistrationModel
     {
+        public string Login { get; set; }
+
+        public string PersonalEmail { get; set; }
+
         public string Code { get; set; }
     }
 }

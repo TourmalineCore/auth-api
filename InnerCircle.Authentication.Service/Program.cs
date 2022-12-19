@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using Data;
 using Data.Models;
 using Data.Queries;
+using InnerCircle.Authentication.Service.Services;
 using InnerCircle.Authentication.Service.Services.Callbacks;
-using InnerCircle.Authentication.Service.Services.Middlewares;
-using InnerCircle.Authentication.Service.Services.Models;
 using InnerCircle.Authentication.Service.Services.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.EventLog;
 using TourmalineCore.AspNetCore.JwtAuthentication.Core;
@@ -100,13 +100,23 @@ builder.Services
     .AddLogout()
     // use credentials validator if you have additional validations
     //.AddUserCredentialsValidator<UserCredentialsValidator>()
-    .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType)
-    .AddRegistration<RegistrationModel>();
+    .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType);
 
+builder.Services.AddIdentityCore<User>().AddDefaultTokenProviders();
 
 
 builder.Services.AddSingleton<AuthCallbacks>();
 builder.Services.AddTransient<IUserQuery, UserQuery>();
+builder.Services.AddTransient<UsersService>();
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
+{
+    builder.Services.AddTransient<IRequestsService, FakeRequestsService>();
+
+}
+else
+{
+    builder.Services.AddTransient<IRequestsService, RequestsService>();
+}
 
 
 var app = builder.Build();
@@ -146,19 +156,7 @@ app
         {
             LogoutEndpointRoute = "/auth/logout"
         }
-    )
-    .UseMiddleware<GeneratePasswordMiddleware>()
-    .UseRegistration<User, long, RegistrationModel>(x => new User
-        {
-            UserName = x.Login,
-            NormalizedUserName = x.Login,
-            UserUniqueIdentificator = x.Code
-        },
-        new RegistrationEndpointOptions
-        {
-            RegistrationEndpointRoute = "/auth/register"
-        })
-    ;
+    );
 
 if (!app.Environment.IsEnvironment("Tests"))
 {
