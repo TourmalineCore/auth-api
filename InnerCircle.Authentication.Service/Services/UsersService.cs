@@ -20,7 +20,7 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task RegisterAsync(RegistrationModel requestModel)
         {
-            var account = new User { UserName = requestModel.Login };
+            var account = new User { UserName = requestModel.Login, AccountId = requestModel.AccountId };
             await _userManager.CreateAsync(account, 
                 GeneratePassword(5,5,5,5));
 

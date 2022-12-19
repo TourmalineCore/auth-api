@@ -6,5 +6,6 @@
 
         public string PersonalEmail { get; set; }
 
+        public long AccountId { get; set; }
     }
 }

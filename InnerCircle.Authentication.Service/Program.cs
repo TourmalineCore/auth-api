@@ -5,6 +5,7 @@ using Data.Models;
 using Data.Queries;
 using InnerCircle.Authentication.Service.Services;
 using InnerCircle.Authentication.Service.Services.Callbacks;
+using InnerCircle.Authentication.Service.Services.Options;
 using InnerCircle.Authentication.Service.Services.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -104,6 +105,8 @@ builder.Services
 
 builder.Services.AddIdentityCore<User>().AddDefaultTokenProviders();
 
+var innerCircleServiceUrl = configuration.GetSection("InnerCircleServiceUrls");
+builder.Services.Configure<InnerCircleServiceUrls>(u => innerCircleServiceUrl.Bind(u));
 
 builder.Services.AddSingleton<AuthCallbacks>();
 builder.Services.AddTransient<IUserQuery, UserQuery>();
