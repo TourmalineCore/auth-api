@@ -6,6 +6,5 @@
 
         public string PersonalEmail { get; set; }
 
-        public string Code { get; set; }
     }
 }

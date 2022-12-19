@@ -1,11 +1,10 @@
-﻿using InnerCircle.Authentication.Service.Services.Models;
-
-namespace InnerCircle.Authentication.Service.Services
+﻿namespace InnerCircle.Authentication.Service.Services
 {
     public class FakeRequestsService : IRequestsService
     {
-        public Task SendPasswordCreatingLink(RegistrationModel model)
+        public Task SendPasswordCreatingLink(string email, string token)
         {
+            Console.WriteLine(token);
             return Task.CompletedTask;
         }
     }

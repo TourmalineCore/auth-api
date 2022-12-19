@@ -8,6 +8,5 @@ namespace Data.Models
         /// This is a custom user entity to which you can add the necessary properties
         /// </summary>
         public bool IsBlocked { get; set; }
-        public string UserUniqueIdentificator { get; set; }
     }
 }

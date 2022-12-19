@@ -1,5 +1,4 @@
-﻿using InnerCircle.Authentication.Service.Services.Models;
-using InnerCircle.Authentication.Service.Services.Options;
+﻿using InnerCircle.Authentication.Service.Services.Options;
 using Microsoft.Extensions.Options;
 
 namespace InnerCircle.Authentication.Service.Services
@@ -15,12 +14,12 @@ namespace InnerCircle.Authentication.Service.Services
             _urls = urls.Value;
         }
 
-        public async Task SendPasswordCreatingLink(RegistrationModel model)
+        public async Task SendPasswordCreatingLink(string email, string token)
         {
             var mailSenderLink = $"{_urls.MailServiceUrl}api/mail/send";
             await _client.PostAsJsonAsync(mailSenderLink,
-                new { To = model.PersonalEmail, 
-                    Body = $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}invitation?code={model.Code}" });
+                new { To = email, 
+                    Body = $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}invitation?code={token}" });
         }
     }
 }
