@@ -2,7 +2,7 @@
 
 namespace InnerCircle.Authentication.Service.Services
 {
-    public interface IRequestsService
+    public interface IInnerCircleHttpClient
     {
         Task SendPasswordCreatingLink(string email, string token);
         Task<List<string>> GetPrivileges(long accountId);

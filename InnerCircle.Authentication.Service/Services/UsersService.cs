@@ -9,13 +9,13 @@ namespace InnerCircle.Authentication.Service.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly IUserQuery _userQuery;
-        private readonly IRequestsService _requestsService;
+        private readonly IInnerCircleHttpClient _innerCircleHttpClient;
 
-        public UsersService(UserManager<User> userManager, IUserQuery userQuery, IRequestsService requestsService)
+        public UsersService(UserManager<User> userManager, IUserQuery userQuery, IInnerCircleHttpClient innerCircleHttpClient)
         {
             _userManager = userManager;
             _userQuery = userQuery;
-            _requestsService = requestsService;
+            _innerCircleHttpClient = innerCircleHttpClient;
         }
 
         public async Task RegisterAsync(RegistrationModel requestModel)
@@ -25,7 +25,7 @@ namespace InnerCircle.Authentication.Service.Services
                 GeneratePassword(5,5,5,5));
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(account);
-            await _requestsService.SendPasswordCreatingLink(requestModel.PersonalEmail, resetToken);
+            await _innerCircleHttpClient.SendPasswordCreatingLink(requestModel.PersonalEmail, resetToken);
         }
 
         public async Task CreatePasswordAsync(CreatePasswordModel requestModel)

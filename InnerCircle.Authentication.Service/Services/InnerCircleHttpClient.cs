@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace InnerCircle.Authentication.Service.Services
 {
-    public class InnerCircleHttpClient : IRequestsService
+    public class InnerCircleHttpClient : IInnerCircleHttpClient
     {
         private readonly HttpClient _client;
         private readonly InnerCircleServiceUrls _urls;

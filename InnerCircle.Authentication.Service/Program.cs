@@ -112,13 +112,13 @@ builder.Services.AddTransient<IUserQuery, UserQuery>();
 builder.Services.AddTransient<UsersService>();
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
 {
-    builder.Services.AddTransient<IRequestsService, FakeInnerCircleHttpClient>();
+    builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
 
 }
 else
 {
     // toDo: change FakeInnerCircleHttpClient to InnerCircleHttpClient
-    builder.Services.AddTransient<IRequestsService, FakeInnerCircleHttpClient>();
+    builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
 }
 
 

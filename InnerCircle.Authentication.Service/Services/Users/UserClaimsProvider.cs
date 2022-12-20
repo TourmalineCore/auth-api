@@ -8,7 +8,7 @@ namespace InnerCircle.Authentication.Service.Services.Users
     {
         private readonly IUserQuery _userQuery;
         private readonly ILogger<UserClaimsProvider> _logger;
-        private readonly IRequestsService _requestsService;
+        private readonly IInnerCircleHttpClient _innerCircleHttpClient;
 
         public const string PermissionsClaimType = "permissions";
 
@@ -19,17 +19,17 @@ namespace InnerCircle.Authentication.Service.Services.Users
         public UserClaimsProvider(
             IUserQuery userQuery,
             ILogger<UserClaimsProvider> logger,
-            IRequestsService requestsService)
+            IInnerCircleHttpClient innerCircleHttpClient)
         {
             _userQuery = userQuery;
             _logger = logger;
-            _requestsService = requestsService;
+            _innerCircleHttpClient = innerCircleHttpClient;
         }
 
         public async Task<List<Claim>> GetUserClaimsAsync(string login)
         {
             var user = await _userQuery.FindUserByUserNameAsync(login);
-            var privileges = await _requestsService.GetPrivileges(user.AccountId);
+            var privileges = await _innerCircleHttpClient.GetPrivileges(user.AccountId);
 
             var claims = new List<Claim>
             {
