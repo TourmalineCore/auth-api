@@ -3,12 +3,14 @@ using System.Runtime.InteropServices;
 using Data;
 using Data.Models;
 using Data.Queries;
+using InnerCircle.Authentication.Service.Services;
 using InnerCircle.Authentication.Service.Services.Callbacks;
+using InnerCircle.Authentication.Service.Services.Options;
 using InnerCircle.Authentication.Service.Services.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.EventLog;
 using TourmalineCore.AspNetCore.JwtAuthentication.Core;
-using TourmalineCore.AspNetCore.JwtAuthentication.Core.Models.Request;
 using TourmalineCore.AspNetCore.JwtAuthentication.Core.Options;
 using TourmalineCore.AspNetCore.JwtAuthentication.Identity;
 using TourmalineCore.AspNetCore.JwtAuthentication.Identity.Options;
@@ -82,13 +84,12 @@ builder.Host.ConfigureLogging((hostingContext, logging) =>
 
 });
 
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Tests")
-    builder
-        .Services.AddDbContext<AppDbContext>(options =>
-            {
-                AppDbContext.ConfigureContextOptions(options, configuration.GetConnectionString(defaultConnection));
-            }
-        );
+builder
+    .Services.AddDbContext<AppDbContext>(options =>
+        {
+            AppDbContext.ConfigureContextOptions(options, configuration.GetConnectionString(defaultConnection));
+        }
+    );
 
 var authenticationOptions = configuration.GetSection(nameof(AuthenticationOptions)).Get<RefreshAuthenticationOptions>();
 
@@ -99,12 +100,26 @@ builder.Services
     .AddLogout()
     // use credentials validator if you have additional validations
     //.AddUserCredentialsValidator<UserCredentialsValidator>()
-    .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType)
-    .AddRegistration();
+    .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType);
 
+builder.Services.AddIdentityCore<User>().AddDefaultTokenProviders();
+
+var innerCircleServiceUrl = configuration.GetSection("InnerCircleServiceUrls");
+builder.Services.Configure<InnerCircleServiceUrls>(u => innerCircleServiceUrl.Bind(u));
 
 builder.Services.AddSingleton<AuthCallbacks>();
 builder.Services.AddTransient<IUserQuery, UserQuery>();
+builder.Services.AddTransient<UsersService>();
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
+{
+    builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
+
+}
+else
+{
+    // toDo: change FakeInnerCircleHttpClient to InnerCircleHttpClient
+    builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
+}
 
 
 var app = builder.Build();
@@ -129,6 +144,7 @@ using var serviceScope = app.Services.CreateScope();
 app
     .OnLoginExecuting(serviceScope.ServiceProvider.GetRequiredService<AuthCallbacks>().OnLoginExecuting)
     .OnLoginExecuted(serviceScope.ServiceProvider.GetRequiredService<AuthCallbacks>().OnLoginExecuted)
+    
     .UseDefaultLoginMiddleware(new LoginEndpointOptions
         {
             LoginEndpointRoute = "/auth/login"
@@ -143,22 +159,10 @@ app
         {
             LogoutEndpointRoute = "/auth/logout"
         }
-    )
-    .UseRegistration<User, long, RegistrationRequestModel>(x => new User
-        {
-            UserName = x.Login,
-            NormalizedUserName = x.Login,
-        },
-        new RegistrationEndpointOptions
-        {
-            RegistrationEndpointRoute = "/auth/register"
-        });
+    );
 
-if (!app.Environment.IsEnvironment("Tests"))
-{
-    var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
-}
+var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+context.Database.Migrate();
 
 app.UseRouting();
 

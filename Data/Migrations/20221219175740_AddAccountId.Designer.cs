@@ -3,6 +3,7 @@ using System;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221219175740_AddAccountId")]
+    partial class AddAccountId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,24 +95,6 @@ namespace Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            AccessFailedCount = 0,
-                            AccountId = 1L,
-                            ConcurrencyStamp = "15cfcf9e-94f3-4b65-884c-e03f1588fa20",
-                            EmailConfirmed = false,
-                            IsBlocked = false,
-                            LockoutEnabled = true,
-                            NormalizedUserName = "CEO@TOURMALINECORE.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEEim42ocT0sL9H818pD8yMxUDtA3GUCe+SDwlxl0geUX56G2GEvu7G6DKHjXMHowlA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "LCZLJS5K7YP2FO2NFI2P6CQZVJLWEYZZ",
-                            TwoFactorEnabled = false,
-                            UserName = "ceo@tourmalinecore.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<long>", b =>
