@@ -20,8 +20,7 @@ namespace Data.Mappings
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,
                 LockoutEnabled = true,
-                AccessFailedCount = 0,
-                AccountId = 1L
+                AccessFailedCount = 0
             });
         }
     }
