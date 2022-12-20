@@ -2,7 +2,7 @@
 
 namespace InnerCircle.Authentication.Service.Services
 {
-    public class FakeRequestsService : IRequestsService
+    public class FakeInnerCircleHttpClient : IRequestsService
     {
         public Task SendPasswordCreatingLink(string email, string token)
         {

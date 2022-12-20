@@ -4,12 +4,12 @@ using Newtonsoft.Json.Linq;
 
 namespace InnerCircle.Authentication.Service.Services
 {
-    public class RequestsService : IRequestsService
+    public class InnerCircleHttpClient : IRequestsService
     {
         private readonly HttpClient _client;
         private readonly InnerCircleServiceUrls _urls;
 
-        public RequestsService(IOptions<InnerCircleServiceUrls> urls)
+        public InnerCircleHttpClient(IOptions<InnerCircleServiceUrls> urls)
         {
             _client = new HttpClient();
             _urls = urls.Value;

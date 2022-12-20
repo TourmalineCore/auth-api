@@ -84,13 +84,12 @@ builder.Host.ConfigureLogging((hostingContext, logging) =>
 
 });
 
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Tests") 
-    builder
-        .Services.AddDbContext<AppDbContext>(options =>
-            {
-                AppDbContext.ConfigureContextOptions(options, configuration.GetConnectionString(defaultConnection));
-            }
-        );
+builder
+    .Services.AddDbContext<AppDbContext>(options =>
+        {
+            AppDbContext.ConfigureContextOptions(options, configuration.GetConnectionString(defaultConnection));
+        }
+    );
 
 var authenticationOptions = configuration.GetSection(nameof(AuthenticationOptions)).Get<RefreshAuthenticationOptions>();
 
@@ -113,12 +112,12 @@ builder.Services.AddTransient<IUserQuery, UserQuery>();
 builder.Services.AddTransient<UsersService>();
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
 {
-    builder.Services.AddTransient<IRequestsService, FakeRequestsService>();
+    builder.Services.AddTransient<IRequestsService, FakeInnerCircleHttpClient>();
 
 }
 else
 {
-    builder.Services.AddTransient<IRequestsService, RequestsService>();
+    builder.Services.AddTransient<IRequestsService, InnerCircleHttpClient>();
 }
 
 
@@ -161,11 +160,8 @@ app
         }
     );
 
-if (!app.Environment.IsEnvironment("Tests"))
-{
-    var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
-}
+var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+context.Database.Migrate();
 
 app.UseRouting();
 
