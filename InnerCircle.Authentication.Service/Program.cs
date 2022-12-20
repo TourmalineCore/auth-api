@@ -117,7 +117,8 @@ if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
 }
 else
 {
-    builder.Services.AddTransient<IRequestsService, InnerCircleHttpClient>();
+    // toDo: change FakeInnerCircleHttpClient to InnerCircleHttpClient
+    builder.Services.AddTransient<IRequestsService, FakeInnerCircleHttpClient>();
 }
 
 

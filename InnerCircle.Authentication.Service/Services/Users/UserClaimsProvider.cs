@@ -14,7 +14,7 @@ namespace InnerCircle.Authentication.Service.Services.Users
 
         private const string NameIdentifireClaimType = "nameIdentifier";
 
-        private const string IdClaimType = "id";
+        private const string IdClaimType = "accountId";
 
         public UserClaimsProvider(
             IUserQuery userQuery,
