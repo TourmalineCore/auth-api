@@ -25,7 +25,7 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task<List<string>> GetPrivileges(long accountId)
         {
-            var getPrivilegesLink = $"{_urls.AccountsServiceUrl}api/users/findById/{accountId}";
+            var getPrivilegesLink = $"{_urls.AccountsServiceUrl}api/privileges/getByAccountId/{accountId}";
             var response = await _client.GetStringAsync(getPrivilegesLink);
             var privileges = JObject.Parse(response)["privileges"].Values<string>().ToList();
             return privileges;
