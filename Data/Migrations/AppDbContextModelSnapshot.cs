@@ -97,7 +97,7 @@ namespace Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1L,
+                            Id = 50L,
                             AccessFailedCount = 0,
                             AccountId = 1L,
                             ConcurrencyStamp = "15cfcf9e-94f3-4b65-884c-e03f1588fa20",
