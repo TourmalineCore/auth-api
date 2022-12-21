@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221220110943_AddDefaultCeo")]
+    [Migration("20221221070026_AddDefaultCeo")]
     partial class AddDefaultCeo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,7 +99,7 @@ namespace Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1L,
+                            Id = 50L,
                             AccessFailedCount = 0,
                             AccountId = 1L,
                             ConcurrencyStamp = "15cfcf9e-94f3-4b65-884c-e03f1588fa20",

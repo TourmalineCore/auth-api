@@ -9,7 +9,7 @@ namespace Data.Mappings
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasData(new { Id = 1L, 
+            builder.HasData(new { Id = 50L, 
                 IsBlocked = false, 
                 UserName = "ceo@tourmalinecore.com",
                 NormalizedUserName = "CEO@TOURMALINECORE.COM",
