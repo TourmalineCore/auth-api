@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace InnerCircle.Authentication.Service.Services
+﻿namespace InnerCircle.Authentication.Service.Services
 {
     public class FakeInnerCircleHttpClient : IInnerCircleHttpClient
     {
@@ -9,6 +7,13 @@ namespace InnerCircle.Authentication.Service.Services
             Console.WriteLine(token);
             return Task.CompletedTask;
         }
+
+        public Task SendPasswordResetLink(string email, string token)
+        {
+            Console.WriteLine(token);
+            return Task.CompletedTask;
+        }
+
         public async Task<List<string>> GetPrivileges(long accountId)
         {
             return new List<string>

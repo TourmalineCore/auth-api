@@ -28,6 +28,14 @@ namespace InnerCircle.Authentication.Service.Services
             await _innerCircleHttpClient.SendPasswordCreatingLink(requestModel.PersonalEmail, resetToken);
         }
 
+        public async Task ResetPasswordAsync(string corporateEmail)
+        {
+            var account = await _userQuery.FindUserByUserNameAsync(corporateEmail);
+            if (account == null) return;
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(account);
+            await _innerCircleHttpClient.SendPasswordResetLink(corporateEmail, resetToken);
+        }
+
         public async Task CreatePasswordAsync(CreatePasswordModel requestModel)
         {
             var account = await _userQuery.FindUserByUserNameAsync(requestModel.Login);
