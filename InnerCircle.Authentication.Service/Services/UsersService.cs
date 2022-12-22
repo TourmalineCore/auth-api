@@ -31,7 +31,7 @@ namespace InnerCircle.Authentication.Service.Services
         public async Task ResetPasswordAsync(string corporateEmail)
         {
             var account = await _userQuery.FindUserByUserNameAsync(corporateEmail);
-            if (account == null) return;
+            if (account == null) throw new Exception("User doesn't exists");
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(account);
             await _innerCircleHttpClient.SendPasswordResetLink(corporateEmail, resetToken);
         }
