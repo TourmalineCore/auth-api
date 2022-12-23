@@ -19,7 +19,13 @@ namespace InnerCircle.Authentication.Service.Controllers
         {
             return _usersService.RegisterAsync(requestModel);
         }
-        
+
+        [HttpPost("reset")]
+        public Task RegisterUser([FromQuery] string corporateEmail)
+        {
+            return _usersService.ResetPasswordAsync(corporateEmail);
+        }
+
         [HttpPost("create-password")]
         public Task CreatePassword([FromBody] CreatePasswordModel requestModel)
         {
