@@ -4,13 +4,11 @@
     {
         public Task SendPasswordCreatingLink(string email, string token)
         {
-            Console.WriteLine(token);
             return Task.CompletedTask;
         }
 
         public Task SendPasswordResetLink(string email, string token)
         {
-            Console.WriteLine(token);
             return Task.CompletedTask;
         }
 
