@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnerCircle.Authentication.Service.Controllers
 {
-    [Route("auth")]
+    [Route("api/auth")]
     public class UsersController : Controller
     {
         private readonly UsersService _usersService;
