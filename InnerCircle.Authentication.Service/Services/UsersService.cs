@@ -20,12 +20,16 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task RegisterAsync(RegistrationModel requestModel)
         {
-            var account = new User { UserName = requestModel.Login, AccountId = requestModel.AccountId };
+            var account = new User 
+            { 
+                AccountId = requestModel.AccountId,
+                Email = requestModel.CorporateEmail,
+            };
             await _userManager.CreateAsync(account, 
                 GeneratePassword(5,5,5,5));
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(account);
-            await _innerCircleHttpClient.SendPasswordCreatingLink(requestModel.PersonalEmail, resetToken);
+            await _innerCircleHttpClient.SendPasswordCreatingLink(requestModel.CorporateEmail, resetToken);
         }
 
         public async Task ResetPasswordAsync(string corporateEmail)

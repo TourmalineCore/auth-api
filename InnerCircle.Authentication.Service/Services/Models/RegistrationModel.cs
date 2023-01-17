@@ -2,9 +2,7 @@
 {
     public class RegistrationModel
     {
-        public string Login { get; set; }
-
-        public string PersonalEmail { get; set; }
+        public string CorporateEmail { get; set; }
 
         public long AccountId { get; set; }
     }
