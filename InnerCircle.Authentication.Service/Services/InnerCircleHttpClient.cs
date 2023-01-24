@@ -15,12 +15,16 @@ namespace InnerCircle.Authentication.Service.Services
             _urls = urls.Value;
         }
 
-        public async Task SendPasswordCreatingLink(string email, string token)
+        public async Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
         {
             var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-welcome-link";
             await _client.PostAsJsonAsync(mailSenderLink,
-                new { To = email, 
-                    Body = $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}invitation?code={token}" });
+                new
+                {
+                    To = corporateEmail,
+                    Body =
+                        $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}change-password?passwordResetToken={passwordResetToken}&corporateEmail={corporateEmail}"
+                });
         }
 
         public async Task SendPasswordResetLink(string email, string token)
@@ -30,7 +34,8 @@ namespace InnerCircle.Authentication.Service.Services
                 new
                 {
                     To = email,
-                    Body = $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}invitation?code={token}"
+                    Body =
+                        $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}invitation?code={token}"
                 });
         }
 

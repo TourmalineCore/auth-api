@@ -1,11 +1,9 @@
 ﻿namespace InnerCircle.Authentication.Service.Services.Models
 {
-    public class RegistrationModel
+    public readonly struct RegistrationModel
     {
-        public string Login { get; set; }
+        public string CorporateEmail { get; init; }
 
-        public string PersonalEmail { get; set; }
-
-        public long AccountId { get; set; }
+        public long AccountId { get; init; }
     }
 }

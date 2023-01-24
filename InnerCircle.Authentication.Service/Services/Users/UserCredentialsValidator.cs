@@ -19,7 +19,7 @@ namespace InnerCircle.Authentication.Service.Services.Users
 
         public async Task<bool> ValidateUserCredentials(string username, string password)
         {
-            var user = await _userQuery.FindUserByUserNameAsync(username);
+            var user = await _userQuery.FindUserByCorporateEmailAsync(username);
 
             if (user == null)
             {

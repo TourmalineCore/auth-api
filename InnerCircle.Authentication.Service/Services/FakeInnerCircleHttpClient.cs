@@ -2,7 +2,7 @@
 {
     public class FakeInnerCircleHttpClient : IInnerCircleHttpClient
     {
-        public Task SendPasswordCreatingLink(string email, string token)
+        public Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
         {
             return Task.CompletedTask;
         }

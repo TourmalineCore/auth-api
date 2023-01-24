@@ -12,10 +12,10 @@ namespace Data.Queries
             _context = context;
         }
 
-        public async Task<User?> FindUserByUserNameAsync(string login)
+        public async Task<User?> FindUserByCorporateEmailAsync(string corporateEmail)
         {
             return await GetUsersAsQueryable()
-                .SingleOrDefaultAsync(x => x.UserName == login);
+                .SingleOrDefaultAsync(x => x.UserName == corporateEmail);
         }
 
         private IQueryable<User?> GetUsersAsQueryable()

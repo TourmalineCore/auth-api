@@ -10,73 +10,87 @@ namespace InnerCircle.Authentication.Service.Services
         private readonly UserManager<User> _userManager;
         private readonly IUserQuery _userQuery;
         private readonly IInnerCircleHttpClient _innerCircleHttpClient;
+        private readonly ILogger<UsersService> _logger;
+        private readonly IPasswordValidator<User> _passwordValidator;
 
-        public UsersService(UserManager<User> userManager, IUserQuery userQuery, IInnerCircleHttpClient innerCircleHttpClient)
+        public UsersService(
+            UserManager<User> userManager, 
+            IUserQuery userQuery,
+            IInnerCircleHttpClient innerCircleHttpClient, 
+            ILogger<UsersService> logger, 
+            IPasswordValidator<User> passwordValidator)
         {
             _userManager = userManager;
             _userQuery = userQuery;
             _innerCircleHttpClient = innerCircleHttpClient;
+            _logger = logger;
+            _passwordValidator = passwordValidator;
         }
 
-        public async Task RegisterAsync(RegistrationModel requestModel)
+        public async Task RegisterAsync(RegistrationModel registrationModel)
         {
-            var account = new User { UserName = requestModel.Login, AccountId = requestModel.AccountId };
-            await _userManager.CreateAsync(account, 
-                GeneratePassword(5,5,5,5));
+            var user = await _userQuery.FindUserByCorporateEmailAsync(registrationModel.CorporateEmail);
 
-            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(account);
-            await _innerCircleHttpClient.SendPasswordCreatingLink(requestModel.PersonalEmail, resetToken);
+            if (user != null)
+            {
+                throw new NullReferenceException($"User with the corporate email [{registrationModel.CorporateEmail}] already exists");
+            }
+
+            var newUser = new User
+            {
+                UserName = registrationModel.CorporateEmail, 
+                AccountId = registrationModel.AccountId
+            };
+
+            var userPassword = PasswordGenerator.GeneratePassword(5, 5, 5, 5);
+            await _userManager.CreateAsync(newUser, userPassword);
+
+            try
+            {
+                var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(newUser);
+                await _innerCircleHttpClient.SendPasswordCreationLink(registrationModel.CorporateEmail, passwordResetToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    $"[{nameof(UsersService)}]: Couldn't send a link on password creation for user [{registrationModel.CorporateEmail}]. Exception details: {ex.Message}");
+            }
         }
 
         public async Task ResetPasswordAsync(string corporateEmail)
         {
-            var account = await _userQuery.FindUserByUserNameAsync(corporateEmail);
-            if (account == null) throw new Exception("User doesn't exists");
-            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(account);
+            var user = await _userQuery.FindUserByCorporateEmailAsync(corporateEmail);
+            if (user == null) throw new NullReferenceException("User doesn't exists");
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             await _innerCircleHttpClient.SendPasswordResetLink(corporateEmail, resetToken);
         }
 
-        public async Task CreatePasswordAsync(CreatePasswordModel requestModel)
+        public async Task ChangePasswordAsync(PasswordChangeModel passwordChangeModel)
         {
-            var account = await _userQuery.FindUserByUserNameAsync(requestModel.Login);
-            await _userManager.ResetPasswordAsync(account, requestModel.UserResetPasswordToken, requestModel.Password);
-        }
+            var user = await _userQuery.FindUserByCorporateEmailAsync(passwordChangeModel.CorporateEmail);
 
-        private string GeneratePassword(int lowercase, int uppercase, int numerics, int symbols)
-        {
-            string lowers = "abcdefghijklmnopqrstuvwxyz";
-            string uppers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string number = "0123456789";
-            string symbol = "!@#$%^&*()_-+=";
+            if (user == null)
+            {
+                throw new NullReferenceException($"User with the corporate email [{passwordChangeModel.CorporateEmail}] doesn't exists");
+            }
 
-            Random random = new Random();
+            var passwordResetTokenIsValid = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider,
+                UserManager<User>.ResetPasswordTokenPurpose, passwordChangeModel.PasswordResetToken);
 
-            string generated = "!";
-            for (int i = 1; i <= lowercase; i++)
-                generated = generated.Insert(
-                    random.Next(generated.Length),
-                    lowers[random.Next(lowers.Length - 1)].ToString()
-                );
+            if (!passwordResetTokenIsValid)
+            {
+                throw new Exception("Password reset token is invalid");
+            }
 
-            for (int i = 1; i <= uppercase; i++)
-                generated = generated.Insert(
-                    random.Next(generated.Length),
-                    uppers[random.Next(uppers.Length - 1)].ToString()
-                );
+            var newPasswordValidationResult = await _passwordValidator.ValidateAsync(_userManager, user, passwordChangeModel.NewPassword);
 
-            for (int i = 1; i <= numerics; i++)
-                generated = generated.Insert(
-                    random.Next(generated.Length),
-                    number[random.Next(number.Length - 1)].ToString()
-                );
+            if (!newPasswordValidationResult.Succeeded)
+            {
+                throw new ArgumentException("New password is invalid");
+            }
 
-            for (int i = 1; i <= symbols; i++)
-                generated = generated.Insert(
-                    random.Next(generated.Length),
-                    symbol[random.Next(symbol.Length - 1)].ToString()
-                );
-
-            return generated.Replace("!", string.Empty);
+            await _userManager.ResetPasswordAsync(user, passwordChangeModel.PasswordResetToken,
+                passwordChangeModel.NewPassword);
         }
     }
 }
