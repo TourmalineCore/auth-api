@@ -2,8 +2,16 @@
 {
     public class FakeInnerCircleHttpClient : IInnerCircleHttpClient
     {
-        public Task SendPasswordCreatingLink(string email, string token)
+        private readonly ILogger<FakeInnerCircleHttpClient> _logger;
+
+        public FakeInnerCircleHttpClient(ILogger<FakeInnerCircleHttpClient> logger)
         {
+            _logger = logger;
+        }
+
+        public Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
+        {
+            _logger.LogInformation($"Corporate email: {corporateEmail}, password reset token: {passwordResetToken}");
             return Task.CompletedTask;
         }
 

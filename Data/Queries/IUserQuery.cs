@@ -4,6 +4,6 @@ namespace Data.Queries
 {
     public interface IUserQuery
     {
-        Task<User?> FindUserByUserNameAsync(string login);
+        Task<User?> FindUserByCorporateEmailAsync(string corporateEmail);
     }
 }

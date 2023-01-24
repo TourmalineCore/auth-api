@@ -1,4 +1,5 @@
-﻿using InnerCircle.Authentication.Service.Services;
+﻿using System.Net;
+using InnerCircle.Authentication.Service.Services;
 using InnerCircle.Authentication.Service.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,15 +10,26 @@ namespace InnerCircle.Authentication.Service.Controllers
     {
         private readonly UsersService _usersService;
 
+        private const int CreatedStatusCode = (int)HttpStatusCode.Created;
+        private const int InternalServerErrorCode = (int)HttpStatusCode.InternalServerError;
+
         public UsersController(UsersService usersService)
         {
             _usersService = usersService;
         }
 
         [HttpPost("register")]
-        public Task RegisterUser([FromBody] RegistrationModel requestModel)
+        public async Task<ActionResult> RegisterUserAsync([FromBody] RegistrationModel registrationModel)
         {
-            return _usersService.RegisterAsync(requestModel);
+            try
+            {
+                await _usersService.RegisterAsync(registrationModel);
+                return StatusCode(CreatedStatusCode);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message, null, InternalServerErrorCode);
+            }
         }
 
         [HttpPost("reset")]
@@ -26,10 +38,18 @@ namespace InnerCircle.Authentication.Service.Controllers
             return _usersService.ResetPasswordAsync(corporateEmail);
         }
 
-        [HttpPost("create-password")]
-        public Task CreatePassword([FromBody] CreatePasswordModel requestModel)
+        [HttpPut("change-password")]
+        public async Task<ActionResult> ChangePasswordAsync([FromBody] PasswordChangeModel passwordChangeModel)
         {
-            return _usersService.CreatePasswordAsync(requestModel);
+            try
+            {
+                await _usersService.ChangePasswordAsync(passwordChangeModel);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message, null, InternalServerErrorCode);
+            }
         }
     }
 }

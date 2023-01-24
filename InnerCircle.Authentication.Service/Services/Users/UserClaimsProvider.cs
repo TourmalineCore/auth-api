@@ -28,7 +28,7 @@ namespace InnerCircle.Authentication.Service.Services.Users
 
         public async Task<List<Claim>> GetUserClaimsAsync(string login)
         {
-            var user = await _userQuery.FindUserByUserNameAsync(login);
+            var user = await _userQuery.FindUserByCorporateEmailAsync(login);
             var privileges = await _innerCircleHttpClient.GetPrivileges(user.AccountId);
 
             var claims = new List<Claim>

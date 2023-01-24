@@ -119,6 +119,8 @@ builder.Services.Configure<InnerCircleServiceUrls>(u => innerCircleServiceUrl.Bi
 builder.Services.AddSingleton<AuthCallbacks>();
 builder.Services.AddTransient<IUserQuery, UserQuery>();
 builder.Services.AddTransient<UsersService>();
+builder.Services.AddTransient<IPasswordValidator<User>, PasswordValidator<User>>();
+
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
 {
     builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
