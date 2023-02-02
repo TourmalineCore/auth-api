@@ -12,9 +12,9 @@ namespace InnerCircle.Authentication.Service.Services.Users
 
         public const string PermissionsClaimType = "permissions";
 
-        private const string NameIdentifireClaimType = "nameIdentifier";
+        private const string NameIdentifierClaimType = "nameIdentifier";
 
-        private const string AccountIdClaimType = "accountId";
+        private const string CorporateEmailClaimType = "corporateEmail";
 
         public UserClaimsProvider(
             IUserQuery userQuery,
@@ -33,8 +33,8 @@ namespace InnerCircle.Authentication.Service.Services.Users
 
             var claims = new List<Claim>
             {
-                new Claim(NameIdentifireClaimType, login),
-                new Claim(AccountIdClaimType, user.AccountId.ToString()),
+                new (NameIdentifierClaimType, login),
+                new (CorporateEmailClaimType, user.UserName),
                 
             };
             privileges.ForEach(x => claims.Add(new Claim(PermissionsClaimType, x.ToString())));
