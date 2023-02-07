@@ -17,11 +17,12 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
         {
-            var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-welcome-link";
+            var mailSenderLink = $"{_urls.MailServiceUrl}mail/send-welcome-link";
             await _client.PostAsJsonAsync(mailSenderLink,
                 new
                 {
                     To = corporateEmail,
+                    Subject = "Credits",
                     Body =
                         $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}change-password?passwordResetToken={passwordResetToken}&corporateEmail={corporateEmail}"
                 });
@@ -29,11 +30,12 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task SendPasswordResetLink(string email, string token)
         {
-            var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-reset-link";
+            var mailSenderLink = $"{_urls.MailServiceUrl}mail/send-reset-link";
             await _client.PostAsJsonAsync(mailSenderLink,
                 new
                 {
                     To = email,
+                    Subject = "Credits",
                     Body =
                         $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}invitation?code={token}"
                 });

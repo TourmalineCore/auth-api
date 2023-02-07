@@ -123,13 +123,13 @@ builder.Services.AddTransient<IPasswordValidator<User>, PasswordValidator<User>>
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
 {
-    builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
+    builder.Services.AddTransient<IInnerCircleHttpClient, InnerCircleHttpClient>();
 
 }
 else
 {
     // toDo: change FakeInnerCircleHttpClient to InnerCircleHttpClient
-    builder.Services.AddTransient<IInnerCircleHttpClient, FakeInnerCircleHttpClient>();
+    builder.Services.AddTransient<IInnerCircleHttpClient, InnerCircleHttpClient>();
 }
 
 
