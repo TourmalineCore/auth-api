@@ -22,7 +22,7 @@ namespace InnerCircle.Authentication.Service.Services
                 new
                 {
                     To = corporateEmail,
-                    Subject = "Credits",
+                    Subject = "Change your password to Tourmaline Core",
                     Body =
                         $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={passwordResetToken}&corporateEmail={corporateEmail}"
                 });
@@ -35,7 +35,7 @@ namespace InnerCircle.Authentication.Service.Services
                 new
                 {
                     To = email,
-                    Subject = "Credits",
+                    Subject = "Reset your password to Tourmaline Core",
                     Body =
                         $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}/invitation?code={token}"
                 });
