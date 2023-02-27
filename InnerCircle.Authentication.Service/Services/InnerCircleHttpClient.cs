@@ -1,4 +1,5 @@
-﻿using InnerCircle.Authentication.Service.Services.Options;
+﻿using System.Text.Json;
+using InnerCircle.Authentication.Service.Services.Options;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
@@ -45,8 +46,7 @@ namespace InnerCircle.Authentication.Service.Services
         {
             var getPrivilegesLink = $"{_urls.AccountsServiceUrl}/api/privileges/getByAccountId/{accountId}";
             var response = await _client.GetStringAsync(getPrivilegesLink);
-            var privileges = JObject.Parse(response)["privileges"].Values<string>().ToList();
-            return privileges;
+            return JsonSerializer.Deserialize<List<string>>(response);
         }
     }
 }
