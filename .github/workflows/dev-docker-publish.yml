@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - "#861m96wuk-recover-ci"
 
     tags:
       - v*
