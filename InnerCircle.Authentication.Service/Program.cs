@@ -158,17 +158,17 @@ app
     
     .UseDefaultLoginMiddleware(new LoginEndpointOptions
         {
-            LoginEndpointRoute = "/auth/login"
+            LoginEndpointRoute = "/api/auth/login"
         }
     )
     .UseRefreshTokenMiddleware(new RefreshEndpointOptions
         {
-            RefreshEndpointRoute = "/auth/refresh"
+            RefreshEndpointRoute = "/api/auth/refresh"
         }
     )
     .UseRefreshTokenLogoutMiddleware(new LogoutEndpointOptions
         {
-            LogoutEndpointRoute = "/auth/logout"
+            LogoutEndpointRoute = "/api/auth/logout"
         }
     );
 
