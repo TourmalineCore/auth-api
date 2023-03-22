@@ -4,50 +4,49 @@ on:
   push:
     branches:
       - develop
-
-    tags:
-      - v*
-
   pull_request:
 
 env:
   GITHUB_REGISTRY: ghcr.io
 
 jobs:
-  deploy-to-dev-k8s:
-    name: Deploy service to k8s for development environment
-    if: github.event_name == 'push'
+  build-image:
+    name: Build and push service image  
     runs-on: ubuntu-22.04
-
     steps:
       - name: checkout
         uses: actions/checkout@v1
       - name: Build and push image
         run: |
-          docker login ${{ env.GITHUB_REGISTRY }} -u ${{ github.actor }} -p ${{ secrets.GH_REGISTRY_TOKEN }}
-          docker build -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:latest -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:${{ github.sha }} -f InnerCircle.Authentication.Service/Dockerfile .
-          docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:latest
-          docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/dev-auth-api:${{ github.sha }}
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+          docker build -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:latest -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:${{ github.sha }} -f InnerCircle.Authentication.Service/Dockerfile .
+          docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:latest
+          docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:${{ github.sha }}
+
+  deploy-to-dev-k8s:
+    needs: build-image
+    name: Deploy service to k8s for development environment  
+    if: github.event_name == 'push'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v1
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
-          exec:
-            helm upgrade --namespace dev-inner-circle --create-namespace --install dev-auth-api
-            --set "aspnetcoreEnvironment=Development"
-            --set "ingress.host"=${{ secrets.DEV_HOST }}
-            --set "deployment.appsettings.ConnectionStrings.DefaultConnection=${{ secrets.DEV_POSTGRESQL_CONNECTION_STRING }}"
-            --set "deployment.appsettings.AuthenticationOptions.PublicSigningKey=${{ secrets.DEV_AUTH_PUBLIC_SIGNING_KEY }}"
-            --set "deployment.appsettings.AuthenticationOptions.PrivateSigningKey=${{ secrets.DEV_AUTH_PRIVATE_SIGNING_KEY }}"
-            --set "deployment.appsettings.InnerCircleServiceUrls.MailServiceUrl=${{ secrets.DEV_MAIL_SERVICE_URL }}"
-            --set "deployment.appsettings.InnerCircleServiceUrls.AuthUIServiceUrl=${{ secrets.DEV_AUTH_UI_SERVICE_URL }}"
-            --set "deployment.appsettings.InnerCircleServiceUrls.AccountsServiceUrl=${{ secrets.DEV_ACCOUNTS_SERVICE_URL }}"
-            --set "resources.limits.cpu=${{ secrets.DEV_APP_CPU_LIMIT }}"
-            --set "resources.limits.memory=${{ secrets.DEV_APP_MEMORY_LIMIT }}"
-            --set "resources.requests.cpu=${{ secrets.DEV_APP_CPU_REQUESTS }}"
-            --set "resources.requests.memory=${{ secrets.DEV_APP_MEMORY_REQUESTS }}"
-            --set "imageCredentials.username=${{ github.actor }}"
-            --set "imageCredentials.password=${{ secrets.GH_REGISTRY_TOKEN }}"
-            --set "image.tag=${{ github.sha }}"
-            --set "image.pullPolicy=Always"
-            ./InnerCircle.Authentication.Service/ci/chart
+          exec: |
+            RELEASE_NAME=auth-api
+            helm repo add bitnami https://charts.bitnami.com/bitnami
+            helm upgrade --install --namespace dev-inner-circle --create-namespace --values ./InnerCircle.Authentication.Service/ci/values-custom.yaml \
+            --set "image.tag=${{ github.sha }}" \
+            --set "extraSecretEnvVars.ConnectionStrings__DefaultConnection=${{ secrets.DEV_POSTGRESQL_CONNECTION_STRING }}"
+            --set "extraSecretEnvVars.AuthenticationOptions__PublicSigningKey=${{ secrets.DEV_AUTH_PUBLIC_SIGNING_KEY }}"
+            --set "extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey=${{ secrets.DEV_AUTH_PRIVATE_SIGNING_KEY }}"
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl=${{ secrets.DEV_MAIL_SERVICE_URL }}"
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl=${{ secrets.DEV_AUTH_UI_SERVICE_URL }}"
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl=${{ secrets.DEV_ACCOUNTS_SERVICE_URL }}"
+            "${RELEASE_NAME}" \
+            bitnami/aspnet-core
           kubeconfig: "${{ secrets.DEV_KUBECONFIG }}"
+
+
