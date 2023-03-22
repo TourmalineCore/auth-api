@@ -39,12 +39,12 @@ jobs:
             helm repo add bitnami https://charts.bitnami.com/bitnami
             helm upgrade --install --namespace dev-inner-circle --create-namespace --values ./InnerCircle.Authentication.Service/ci/values-custom.yaml \
             --set "image.tag=${{ github.sha }}" \
-            --set "extraSecretEnvVars.ConnectionStrings__DefaultConnection=${{ secrets.DEV_POSTGRESQL_CONNECTION_STRING }}"
-            --set "extraSecretEnvVars.AuthenticationOptions__PublicSigningKey=${{ secrets.DEV_AUTH_PUBLIC_SIGNING_KEY }}"
-            --set "extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey=${{ secrets.DEV_AUTH_PRIVATE_SIGNING_KEY }}"
-            --set "extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl=${{ secrets.DEV_MAIL_SERVICE_URL }}"
-            --set "extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl=${{ secrets.DEV_AUTH_UI_SERVICE_URL }}"
-            --set "extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl=${{ secrets.DEV_ACCOUNTS_SERVICE_URL }}"
+            --set "extraSecretEnvVars.ConnectionStrings__DefaultConnection=${{ secrets.DEV_POSTGRESQL_CONNECTION_STRING }}" \
+            --set "extraSecretEnvVars.AuthenticationOptions__PublicSigningKey=${{ secrets.DEV_AUTH_PUBLIC_SIGNING_KEY }}" \
+            --set "extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey=${{ secrets.DEV_AUTH_PRIVATE_SIGNING_KEY }}" \
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl=${{ secrets.DEV_MAIL_SERVICE_URL }}" \
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl=${{ secrets.DEV_AUTH_UI_SERVICE_URL }}" \
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl=${{ secrets.DEV_ACCOUNTS_SERVICE_URL }}" \
             "${RELEASE_NAME}" \
             bitnami/aspnet-core
           kubeconfig: "${{ secrets.DEV_KUBECONFIG }}"
