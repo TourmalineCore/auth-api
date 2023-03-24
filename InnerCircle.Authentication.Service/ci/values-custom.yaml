@@ -26,7 +26,7 @@ image:
 
   pullSecrets: []
     # https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_images.tpl#L49
-    # - "{{ include \"aspnet-core.fullname\" . }}-docker-secret"
+    # - "{{ include \"common.names.fullname\" . }}-docker-secret"
 
   pullCredentials: {}
     # username: login
@@ -60,10 +60,10 @@ extraSecretEnvVarsEncoded: |
 
 ## @param extraEnvVarsCM ConfigMap with extra environment variables
 ##
-extraEnvVarsCM: "{{ include \"aspnet-core.fullname\" . }}"
+extraEnvVarsCM: "{{ include \"common.names.fullname\" . }}"
 ## @param extraEnvVarsSecret Secret with extra environment variables
 ##
-extraEnvVarsSecret: "{{ include \"aspnet-core.fullname\" . }}"
+extraEnvVarsSecret: "{{ include \"common.names.fullname\" . }}"
 
 ## @section ASP.NET Core deployment parameters
 ##
@@ -178,7 +178,7 @@ extraDeploy:
     apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: {{ include "aspnet-core.fullname" . }}
+      name: {{ include "common.names.fullname" . }}
       namespace: {{ include "common.names.namespace" . | quote }}
       labels: {{- include "common.labels.standard" . | nindent 6 }}
         {{- if .Values.commonLabels }}
@@ -195,7 +195,7 @@ extraDeploy:
     apiVersion: v1
     kind: Secret
     metadata:
-      name: {{ include "aspnet-core.fullname" . }}
+      name: {{ include "common.names.fullname" . }}
       namespace: {{ include "common.names.namespace" . | quote }}
       labels: {{- include "common.labels.standard" . | nindent 6 }}
         {{- if .Values.commonLabels }}
@@ -210,7 +210,7 @@ extraDeploy:
       {{- include "common.tplvalues.render" ( dict "value" .Values.extraSecretEnvVarsEncoded "context" $ ) | trim | nindent 6 }}
       {{- end }}
   - |
-    {{ $docker_secret_name := printf "%s%s" ( include "aspnet-core.fullname" .) "-docker-secret" }}
+    {{ $docker_secret_name := printf "%s%s" ( include "common.names.fullname" .) "-docker-secret" }}
     {{- if has $docker_secret_name .Values.image.pullSecrets }}
     apiVersion: v1
     kind: Secret
