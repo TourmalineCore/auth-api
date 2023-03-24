@@ -43,6 +43,12 @@ args:
 ##
 bindURLs: http://+:80
 
+## @param podAnnotations Annotations for NGINX pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations:
+  checksum/config: "{{ include (print $.Template.BasePath \"/extra-list.yaml\") . | sha256sum }}"
+
 # Here stored regular vars that passed to the pod environment
 extraConfigMapEnvVars: {}
   # Logging__LogLevel__Default: "Error"
