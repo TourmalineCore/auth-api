@@ -69,7 +69,11 @@ extraSecretEnvVarsEncoded: |
 extraEnvVarsCM: "{{ include \"common.names.fullname\" . }}"
 ## @param extraEnvVarsSecret Secret with extra environment variables
 ##
+
+# If you need secrets, than use line below 
 extraEnvVarsSecret: "{{ include \"common.names.fullname\" . }}"
+# else use
+# extraEnvVarsSecret: ""
 
 ## @section ASP.NET Core deployment parameters
 ##
@@ -198,6 +202,7 @@ extraDeploy:
       {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfigMapEnvVars "context" $ ) | nindent 6 }}
       {{- end }}
   - |
+    {{- if .Values.extraEnvVarsSecret }}
     apiVersion: v1
     kind: Secret
     metadata:
@@ -215,6 +220,7 @@ extraDeploy:
       {{- if .Values.extraSecretEnvVarsEncoded }}
       {{- include "common.tplvalues.render" ( dict "value" .Values.extraSecretEnvVarsEncoded "context" $ ) | trim | nindent 6 }}
       {{- end }}
+    {{- end }}
   - |
     {{ $docker_secret_name := printf "%s%s" ( include "common.names.fullname" .) "-docker-secret" }}
     {{- if has $docker_secret_name .Values.image.pullSecrets }}
