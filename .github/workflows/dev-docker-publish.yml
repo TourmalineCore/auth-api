@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - feature/#861mhn6b6-move-to-bitnami-chart
   pull_request:
 
 env:
@@ -32,16 +33,15 @@ jobs:
       - name: checkout
         uses: actions/checkout@v1
       - name: Deploy
-        uses: WyriHaximus/github-action-helm3@v2
+        uses: WyriHaximus/github-action-helm3@v3
         with:
-            # Disable ingress until resolve security issues
-            # --set "ingress.hostname=${{ secrets.DEV_HOST }}" \
-            # --set "ingress.enabled=true" \
           exec: |
             RELEASE_NAME=auth-api
             helm repo add bitnami https://charts.bitnami.com/bitnami
             helm upgrade --install --namespace dev-inner-circle --create-namespace --values ./InnerCircle.Authentication.Service/ci/values-custom.yaml \
             --set "image.tag=${{ github.sha }}" \
+            --set "ingress.enabled=false" \
+            --set "ingress.hostname=${{ secrets.DEV_HOST }}" \
             --set "extraSecretEnvVars.ConnectionStrings__DefaultConnection=${{ secrets.DEV_POSTGRESQL_CONNECTION_STRING }}" \
             --set "extraSecretEnvVars.AuthenticationOptions__PublicSigningKey=${{ secrets.DEV_AUTH_PUBLIC_SIGNING_KEY }}" \
             --set "extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey=${{ secrets.DEV_AUTH_PRIVATE_SIGNING_KEY }}" \
