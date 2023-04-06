@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - feature/#861mhn6b6-move-to-bitnami-chart
   pull_request:
 
 env:
