@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
+using System.Web;
 using InnerCircle.Authentication.Service.Services.Options;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 
 namespace InnerCircle.Authentication.Service.Services
 {
@@ -18,27 +18,27 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
         {
-            var mailSenderLink = $"{_urls.MailServiceUrl}/api/mail/send-welcome-link";
+            var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-welcome-link";
             await _client.PostAsJsonAsync(mailSenderLink,
                 new
                 {
                     To = corporateEmail,
                     Subject = "Change your password to Tourmaline Core",
                     Body =
-                        $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={passwordResetToken}&corporateEmail={corporateEmail}"
+                        $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
                 });
         }
 
-        public async Task SendPasswordResetLink(string email, string token)
+        public async Task SendPasswordResetLink(string corporateEmail, string passwordResetToken)
         {
-            var mailSenderLink = $"{_urls.MailServiceUrl}/api/mail/send-reset-link";
+            var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-reset-link";
             await _client.PostAsJsonAsync(mailSenderLink,
                 new
                 {
-                    To = email,
+                    To = corporateEmail,
                     Subject = "Reset your password to Tourmaline Core",
                     Body =
-                        $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}/invitation?code={token}"
+                        $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
                 });
         }
 
