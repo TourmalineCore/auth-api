@@ -42,10 +42,10 @@ namespace InnerCircle.Authentication.Service.Services
                 });
         }
 
-        public async Task<List<string>> GetPrivileges(long accountId)
+        public async Task<List<string>> GetPermissions(long accountId)
         {
-            var getPrivilegesLink = $"{_urls.AccountsServiceUrl}/privileges/getByAccountId/{accountId}";
-            var response = await _client.GetStringAsync(getPrivilegesLink);
+            var accountPermissionsLink = $"{_urls.AccountsServiceUrl}/accounts/{accountId}/permissions";
+            var response = await _client.GetStringAsync(accountPermissionsLink);
             return JsonSerializer.Deserialize<List<string>>(response);
         }
     }

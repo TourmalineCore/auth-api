@@ -20,7 +20,7 @@
             return Task.CompletedTask;
         }
 
-        public async Task<List<string>> GetPrivileges(long accountId)
+        public async Task<List<string>> GetPermissions(long accountId)
         {
             return new List<string>
             {
