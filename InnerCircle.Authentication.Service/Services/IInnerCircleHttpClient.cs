@@ -6,6 +6,6 @@ namespace InnerCircle.Authentication.Service.Services
     {
         Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken);
         Task SendPasswordResetLink(string email, string token);
-        Task<List<string>> GetPrivileges(long accountId);
+        Task<List<string>> GetPermissions(long accountId);
     }
 }
