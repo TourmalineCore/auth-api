@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using Data.Commands;
+using Data.Models;
 using Data.Queries;
 using InnerCircle.Authentication.Service.Services.Models;
 using Microsoft.AspNetCore.Identity;
@@ -8,28 +9,34 @@ namespace InnerCircle.Authentication.Service.Services
     public class UsersService
     {
         private readonly UserManager<User> _userManager;
-        private readonly IUserQuery _userQuery;
+        private readonly IFindUserQuery _findUserQuery;
         private readonly IInnerCircleHttpClient _innerCircleHttpClient;
         private readonly ILogger<UsersService> _logger;
         private readonly IPasswordValidator<User> _passwordValidator;
+        private readonly UserBlockCommand _userBlockCommand;
+        private readonly UserUnblockCommand _userUnblockCommand;
 
         public UsersService(
             UserManager<User> userManager, 
-            IUserQuery userQuery,
+            IFindUserQuery findUserQuery,
             IInnerCircleHttpClient innerCircleHttpClient, 
             ILogger<UsersService> logger, 
-            IPasswordValidator<User> passwordValidator)
+            IPasswordValidator<User> passwordValidator, 
+            UserBlockCommand userBlockCommand, 
+            UserUnblockCommand userUnblockCommand)
         {
             _userManager = userManager;
-            _userQuery = userQuery;
+            _findUserQuery = findUserQuery;
             _innerCircleHttpClient = innerCircleHttpClient;
             _logger = logger;
             _passwordValidator = passwordValidator;
+            _userBlockCommand = userBlockCommand;
+            _userUnblockCommand = userUnblockCommand;
         }
 
         public async Task RegisterAsync(RegistrationModel registrationModel)
         {
-            var user = await _userQuery.FindUserByCorporateEmailAsync(registrationModel.CorporateEmail);
+            var user = await _findUserQuery.FindUserByCorporateEmailAsync(registrationModel.CorporateEmail);
 
             if (user != null)
             {
@@ -57,9 +64,19 @@ namespace InnerCircle.Authentication.Service.Services
             }
         }
 
+        public async Task BlockAsync(long accountId)
+        {
+            await _userBlockCommand.ExecuteAsync(accountId);
+        }
+
+        public async Task UnblockAsync(long accountId)
+        {
+            await _userUnblockCommand.ExecuteAsync(accountId);
+        }
+
         public async Task ResetPasswordAsync(string corporateEmail)
         {
-            var user = await _userQuery.FindUserByCorporateEmailAsync(corporateEmail);
+            var user = await _findUserQuery.FindUserByCorporateEmailAsync(corporateEmail);
             if (user == null) throw new NullReferenceException("User doesn't exists");
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             await _innerCircleHttpClient.SendPasswordResetLink(corporateEmail, resetToken);
@@ -67,7 +84,7 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task ChangePasswordAsync(PasswordChangeModel passwordChangeModel)
         {
-            var user = await _userQuery.FindUserByCorporateEmailAsync(passwordChangeModel.CorporateEmail);
+            var user = await _findUserQuery.FindUserByCorporateEmailAsync(passwordChangeModel.CorporateEmail);
 
             if (user == null)
             {
