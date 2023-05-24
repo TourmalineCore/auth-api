@@ -2,7 +2,7 @@ using Data.Models;
 
 namespace Data.Queries
 {
-    public interface IUserQuery
+    public interface IFindUserQuery
     {
         Task<User?> FindUserByCorporateEmailAsync(string corporateEmail);
     }

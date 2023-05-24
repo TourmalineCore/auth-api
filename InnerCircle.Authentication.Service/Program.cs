@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Data;
+using Data.Commands;
 using Data.Models;
 using Data.Queries;
 using InnerCircle.Authentication.Service.Services;
@@ -98,8 +99,7 @@ builder.Services
     .AddLoginWithRefresh(authenticationOptions)
     .AddRefreshConfidenceInterval()
     .AddLogout()
-    // use credentials validator if you have additional validations
-    //.AddUserCredentialsValidator<UserCredentialsValidator>()
+    .AddUserCredentialsValidator<UserCredentialsValidator>()
     .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType);
 
 builder.Services.AddIdentityCore<User>().AddDefaultTokenProviders();
@@ -117,9 +117,12 @@ var innerCircleServiceUrl = configuration.GetSection("InnerCircleServiceUrls");
 builder.Services.Configure<InnerCircleServiceUrls>(u => innerCircleServiceUrl.Bind(u));
 
 builder.Services.AddSingleton<AuthCallbacks>();
-builder.Services.AddTransient<IUserQuery, UserQuery>();
+builder.Services.AddTransient<IFindUserQuery, FindUserQuery>();
+builder.Services.AddTransient<GetUserQuery>();
 builder.Services.AddTransient<UsersService>();
 builder.Services.AddTransient<IPasswordValidator<User>, PasswordValidator<User>>();
+builder.Services.AddTransient<UserBlockCommand>();
+builder.Services.AddTransient<UserUnblockCommand>();
 
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Debug")
 {

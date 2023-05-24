@@ -6,7 +6,7 @@ namespace InnerCircle.Authentication.Service.Services.Users
 {
     public class UserClaimsProvider : IUserClaimsProvider
     {
-        private readonly IUserQuery _userQuery;
+        private readonly IFindUserQuery _userQuery;
         private readonly ILogger<UserClaimsProvider> _logger;
         private readonly IInnerCircleHttpClient _innerCircleHttpClient;
 
@@ -17,7 +17,7 @@ namespace InnerCircle.Authentication.Service.Services.Users
         private const string CorporateEmailClaimType = "corporateEmail";
 
         public UserClaimsProvider(
-            IUserQuery userQuery,
+            IFindUserQuery userQuery,
             ILogger<UserClaimsProvider> logger,
             IInnerCircleHttpClient innerCircleHttpClient)
         {

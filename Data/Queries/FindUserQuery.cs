@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Queries
 {
-    public class UserQuery : IUserQuery
+    public class FindUserQuery : IFindUserQuery
     {
         private readonly AppDbContext _context;
 
-        public UserQuery(AppDbContext context)
+        public FindUserQuery(AppDbContext context)
         {
             _context = context;
         }
