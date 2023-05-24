@@ -44,7 +44,7 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task<List<string>> GetPermissions(long accountId)
         {
-            var accountPermissionsLink = $"{_urls.AccountsServiceUrl}/accounts/{accountId}/permissions";
+            var accountPermissionsLink = $"{_urls.AccountsServiceUrl}/internal/account-permissions/{accountId}";
             var response = await _client.GetStringAsync(accountPermissionsLink);
             return JsonSerializer.Deserialize<List<string>>(response);
         }
