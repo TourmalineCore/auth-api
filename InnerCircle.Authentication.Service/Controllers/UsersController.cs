@@ -51,33 +51,5 @@ namespace InnerCircle.Authentication.Service.Controllers
                 return Problem(ex.Message, null, InternalServerErrorCode);
             }
         }
-
-        [HttpPost("block")]
-        public async Task<ActionResult> BlockAsync([FromBody] BlockingRequest req)
-        {
-            try
-            {
-                await _usersService.BlockAsync(req.AccountId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message, null, InternalServerErrorCode);
-            }
-        }
-
-        [HttpPost("unblock")]
-        public async Task<ActionResult> UnblockAsync([FromBody] UnblockingRequest req)
-        {
-            try
-            {
-                await _usersService.UnblockAsync(req.AccountId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message, null, InternalServerErrorCode);
-            }
-        }
     }
 }
