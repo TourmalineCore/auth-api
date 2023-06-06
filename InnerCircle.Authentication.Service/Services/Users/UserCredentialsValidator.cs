@@ -1,4 +1,6 @@
+using Data.Models;
 using Data.Queries;
+using Microsoft.AspNetCore.Identity;
 using TourmalineCore.AspNetCore.JwtAuthentication.Core.Contract;
 
 namespace InnerCircle.Authentication.Service.Services.Users
@@ -7,13 +9,16 @@ namespace InnerCircle.Authentication.Service.Services.Users
     {
         private readonly ILogger<UserCredentialsValidator> _logger;
         private readonly IFindUserQuery _userQuery;
+        private readonly UserManager<User> _userManager;
 
         public UserCredentialsValidator(
             ILogger<UserCredentialsValidator> logger,
-            IFindUserQuery userQuery)
+            IFindUserQuery userQuery,
+            UserManager<User> userManager)
         {
             _logger = logger;
             _userQuery = userQuery;
+            _userManager = userManager;
         }
 
         public async Task<bool> ValidateUserCredentials(string username, string password)
@@ -24,6 +29,15 @@ namespace InnerCircle.Authentication.Service.Services.Users
             {
                 _logger.LogWarning(
                     $"[{nameof(UserCredentialsValidator)}]: User with credentials [{username}] not found.");
+                return false;
+            }
+
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!isValidPassword)
+            {
+                _logger.LogWarning(
+                    $"[{nameof(UserCredentialsValidator)}]: The password [{password}] is invalid for a user [{username}]");
                 return false;
             }
 
