@@ -12,6 +12,8 @@ namespace InnerCircle.Authentication.Service.Services.Users
 
         public const string PermissionsClaimType = "permissions";
 
+        public const string TenantIdClaimType = "tenantId";
+
         private const string NameIdentifierClaimType = "nameIdentifier";
 
         private const string CorporateEmailClaimType = "corporateEmail";
@@ -30,12 +32,14 @@ namespace InnerCircle.Authentication.Service.Services.Users
         {
             var user = await _userQuery.FindUserByCorporateEmailAsync(login);
             var privileges = await _innerCircleHttpClient.GetPermissions(user.AccountId);
+            var tenantId = await _innerCircleHttpClient.GetTenantId(user.AccountId);
 
             var claims = new List<Claim>
             {
                 new (NameIdentifierClaimType, login),
                 new (CorporateEmailClaimType, user.UserName),
-                
+                new (TenantIdClaimType, tenantId.ToString())
+
             };
             privileges.ForEach(x => claims.Add(new Claim(PermissionsClaimType, x.ToString())));
 

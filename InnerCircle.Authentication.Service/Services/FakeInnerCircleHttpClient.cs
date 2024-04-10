@@ -1,6 +1,6 @@
 ﻿namespace InnerCircle.Authentication.Service.Services
 {
-    public class FakeInnerCircleHttpClient : IInnerCircleHttpClient
+    public class FakeInnerCircleHttpClient
     {
         private readonly ILogger<FakeInnerCircleHttpClient> _logger;
 

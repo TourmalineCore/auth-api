@@ -48,5 +48,12 @@ namespace InnerCircle.Authentication.Service.Services
             var response = await _client.GetStringAsync(accountPermissionsLink);
             return JsonSerializer.Deserialize<List<string>>(response);
         }
+
+        public async Task<long> GetTenantId(long accountId)
+        {
+            var tenantId = $"{_urls.AccountsServiceUrl}/internal/get-tenantId-by-accountId/{accountId}";
+            var response = await _client.GetStringAsync(tenantId);
+            return JsonSerializer.Deserialize<long>(response);
+        }
     }
 }
