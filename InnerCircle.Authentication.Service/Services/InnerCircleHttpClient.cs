@@ -51,8 +51,8 @@ namespace InnerCircle.Authentication.Service.Services
 
         public async Task<long> GetTenantId(long accountId)
         {
-            var tenantId = $"{_urls.AccountsServiceUrl}/internal/get-tenantId-by-accountId/{accountId}";
-            var response = await _client.GetStringAsync(tenantId);
+            var link = $"{_urls.AccountsServiceUrl}/internal/get-tenantId-by-accountId/{accountId}";
+            var response = await _client.GetStringAsync(link);
             return JsonSerializer.Deserialize<long>(response);
         }
     }

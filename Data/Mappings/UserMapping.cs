@@ -24,8 +24,7 @@ public class UserMapping : IEntityTypeConfiguration<User>
                 TwoFactorEnabled = false,
                 LockoutEnabled = true,
                 AccessFailedCount = 0,
-                AccountId = 1L,
-                TenantId = 1L
+                AccountId = 1L
             },
             new
             {
@@ -42,8 +41,7 @@ public class UserMapping : IEntityTypeConfiguration<User>
                 TwoFactorEnabled = false,
                 LockoutEnabled = true,
                 AccessFailedCount = 0,
-                AccountId = 2L,
-                TenantId = 1L
+                AccountId = 2L
             });
     }
 }

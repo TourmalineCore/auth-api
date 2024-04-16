@@ -5,7 +5,5 @@
         public string CorporateEmail { get; init; }
 
         public long AccountId { get; init; }
-
-        public long TenantId { get; init; }
     }
 }
