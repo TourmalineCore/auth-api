@@ -1,0 +1,247 @@
+## @section ASP.NET Core parameters
+##
+
+## Bitnami ASP.NET Core image
+## ref: https://hub.docker.com/r/bitnami/aspnet-core/tags/
+## @param image.registry ASP.NET Core image registry
+## @param image.repository ASP.NET Core image repository
+## @param image.tag ASP.NET Core image tag (immutable tags are recommended)
+## @param image.digest ASP.NET Core image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy ASP.NET Core image pull policy
+## @param image.pullSecrets ASP.NET Core image pull secrets
+## @param image.debug Enable image debug mode
+##
+image:
+  registry: ghcr.io
+  repository: tourmalinecore/inner-circle/auth-api
+  tag: latest
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## e.g:
+  # pullSecrets:
+  #   - myRegistryKeySecretName
+  ##
+  pullPolicy: Always
+
+  pullSecrets: []
+    # https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_images.tpl#L49
+    # - "{{ include \"common.names.fullname\" . }}-docker-secret"
+
+  pullCredentials: {}
+    # username: login
+    # password: password
+
+  debug: false
+
+# Here you need to pass your application dll to the dotnet utility
+args:
+  - "InnerCircle.Authentication.Service.dll"
+  # - "EmailSender.Api.dll"
+
+## @param bindURLs URLs to bind
+##
+bindURLs: http://+:80
+
+## @param podAnnotations Annotations for NGINX pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations:
+  checksum/config: "{{ include (print $.Template.BasePath \"/extra-list.yaml\") . | sha256sum }}"
+
+# Here stored regular vars that passed to the pod environment
+extraConfigMapEnvVars: {}
+  # Logging__LogLevel__Default: "Error"
+
+# Here stored secrets that passed to the pod environment. You should never store them in this file.
+extraSecretEnvVars: {}
+  # Section1__SuperPuperSecretVar: mega-secret
+  # Section2__Email: email@email.com
+  # Section2__Login: login
+
+extraSecretEnvVarsEncoded: |
+  {{- range $k, $v := .Values.extraSecretEnvVars }}
+  {{- if kindIs "int64" $v}}
+  {{ $k }}: {{ $v | quote | b64enc | quote}}
+  {{- else}}
+  {{ $k }}: {{ $v | b64enc | quote}}
+  {{- end}}
+  {{- end }}
+
+## @param extraEnvVarsCM ConfigMap with extra environment variables
+##
+extraEnvVarsCM: "{{ include \"common.names.fullname\" . }}"
+## @param extraEnvVarsSecret Secret with extra environment variables
+##
+
+# If you need secrets, than use line below 
+extraEnvVarsSecret: "{{ include \"common.names.fullname\" . }}"
+# else use
+# extraEnvVarsSecret: ""
+
+## @section ASP.NET Core deployment parameters
+##
+
+## @param replicaCount Number of ASP.NET Core replicas to deploy
+##
+replicaCount: 1
+
+## ASP.NET Core containers' resource requests and limits
+## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+## We usually recommend not to specify default resources and to leave this as a conscious
+## choice for the user. This also increases chances charts run on environments with little
+## resources, such as Minikube. If you do want to specify resources, uncomment the following
+## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+## @param resources.limits The resources limits for the ASP.NET Core container
+## @param resources.requests The requested resources for the ASP.NET Core container
+##
+resources:
+  ## Example:
+  ## limits:
+  ##    cpu: 100m
+  ##    memory: 128Mi
+  ##
+  limits:
+    cpu: 150m
+    memory: 300Mi
+  ## Examples:
+  ## requests:
+  ##    cpu: 100m
+  ##    memory: 128Mi
+  ##
+  requests:
+    cpu: 1m
+    memory: 250Mi
+## @param containerPorts.http Port to expose at ASP.NET Core container level
+##
+containerPorts:
+  http: 80
+
+
+## Enable to download/build ASP.NET Core app from external git repository.
+## Do not enable it if your docker image already includes your application
+##
+appFromExternalRepo:
+  ## @param appFromExternalRepo.enabled Enable to download/build ASP.NET Core app from external git repository
+  ##
+  enabled: false
+## @section Traffic Exposure Parameters
+##
+
+## ASP.NET Core Service parameters.
+##
+service:
+  ## @param service.type ASP.NET Core service type
+  ##
+  type: ClusterIP
+  ## @param service.ports.http ASP.NET Core service HTTP port
+  ##
+  ports:
+    http: 80
+
+## Configure the ingress resource that allows you to access the ASP.NET Core app
+## ref: https://kubernetes.io/docs/user-guide/ingress/
+##
+ingress:
+  ## @param ingress.enabled Enable ingress record generation for ASP.NET Core
+  ##
+  enabled: false
+  ## @param ingress.pathType Ingress path type
+  ##
+  pathType: ImplementationSpecific
+  ## @param ingress.apiVersion Force Ingress API version (automatically detected if not set)
+  ##
+  apiVersion: ""
+  ## @param ingress.hostname Default host for the ingress resource, a host pointing to this will be created
+  ##
+  # hostname: aspnet-core.locals
+  ## @param ingress.path Default path for the ingress record
+  ##
+  path: /api/auth(/|$)(.*)
+  ## @param ingress.annotations Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
+  ## For a full list of possible ingress annotations, please see
+  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+  ## Use this parameter to set the required annotations for cert-manager, see
+  ## ref: https://cert-manager.io/docs/usage/ingress/#supported-annotations
+  ##
+  ## e.g:
+  ## annotations:
+  ##   kubernetes.io/ingress.class: nginx
+  ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+  ##
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /api/auth/$2
+  ## @param ingress.tls Enable TLS configuration for the host defined at `ingress.hostname` parameter
+  ## TLS certificates will be retrieved from a TLS secret with name: `{{- printf "%s-tls" .Values.ingress.hostname }}`
+  ## You can:
+  ##   - Use the `ingress.secrets` parameter to create this TLS secret
+  ##   - Rely on cert-manager to create it by setting the corresponding annotations
+  ##
+  tls: true
+
+  ## @param ingress.ingressClassName IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)
+  ## This is supported in Kubernetes 1.18+ and required if you have more than one IngressClass marked as the default for your cluster .
+  ## ref: https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/
+  ##
+  ingressClassName: nginx
+
+extraDeploy:
+  - |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ include "common.names.fullname" . }}
+      namespace: {{ include "common.names.namespace" . | quote }}
+      labels: {{- include "common.labels.standard" . | nindent 6 }}
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 6 }}
+        {{- end }}
+      {{- if .Values.commonAnnotations }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 6 }}
+      {{- end }}
+    data:
+      {{- if .Values.extraConfigMapEnvVars }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.extraConfigMapEnvVars "context" $ ) | nindent 6 }}
+      {{- end }}
+  - |
+    {{ $secret_name := printf "%s" ( include "common.names.fullname" .) }}
+    {{- if eq ( tpl .Values.extraEnvVarsSecret . ) $secret_name }}
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: {{ $secret_name }}
+      namespace: {{ include "common.names.namespace" . | quote }}
+      labels: {{- include "common.labels.standard" . | nindent 6 }}
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 6 }}
+        {{- end }}
+      {{- if .Values.commonAnnotations }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 6 }}
+      {{- end }}
+    type: Opaque
+    data:
+      {{- if .Values.extraSecretEnvVarsEncoded }}
+      {{- include "common.tplvalues.render" ( dict "value" .Values.extraSecretEnvVarsEncoded "context" $ ) | trim | nindent 6 }}
+      {{- end }}
+    {{- end }}
+  - |
+    {{ $docker_secret_name := printf "%s%s" ( include "common.names.fullname" .) "-docker-secret" }}
+    {{- if has $docker_secret_name .Values.image.pullSecrets }}
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: {{ $docker_secret_name }}
+      namespace: {{ include "common.names.namespace" . | quote }}
+      labels: {{- include "common.labels.standard" . | nindent 6 }}
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 6 }}
+        {{- end }}
+      {{- if .Values.commonAnnotations }}
+      annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 6 }}
+      {{- end }}
+    type: kubernetes.io/dockerconfigjson
+    data:
+      .dockerconfigjson: {{ printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.image.registry (printf "%s:%s" (.Values.image.pullCredentials.username | default "") (.Values.image.pullCredentials.password | default "") | b64enc) | b64enc }}
+    {{- end }}

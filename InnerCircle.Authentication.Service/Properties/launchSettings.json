@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "InnerCircle.Authentication.Service - debug": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Debug"
+      },
+      "applicationUrl": "https://localhost:7104;http://localhost:5104",
+      "dotnetRunMessages": true
+    }
+  }
+}
