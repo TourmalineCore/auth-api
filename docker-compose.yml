@@ -19,7 +19,7 @@ services:
     depends_on:
       - "db-debug"
     build:
-      dockerfile: InnerCircle.Authentication.Service/Dockerfile
+      dockerfile: Api/Dockerfile
       context: .
     ports:
       - 5002:80

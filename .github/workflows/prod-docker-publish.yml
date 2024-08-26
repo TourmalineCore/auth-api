@@ -20,7 +20,7 @@ jobs:
       - name: Build and push image
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-          docker build -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:latest -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:${{ github.sha }} -f InnerCircle.Authentication.Service/Dockerfile .
+          docker build -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:latest -t $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:${{ github.sha }} -f Api/Dockerfile .
           docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:latest
           docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:${{ github.sha }}
 
