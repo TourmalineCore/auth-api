@@ -36,7 +36,7 @@ image:
 
 # Here you need to pass your application dll to the dotnet utility
 args:
-  - "InnerCircle.Authentication.Service.dll"
+  - "Api.dll"
   # - "EmailSender.Api.dll"
 
 ## @param bindURLs URLs to bind
