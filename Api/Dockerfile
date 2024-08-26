@@ -7,17 +7,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["InnerCircle.Authentication.Service/InnerCircle.Authentication.Service.csproj", "InnerCircle.Authentication.Service/"]
+COPY ["Api/Api.csproj", "Api/"]
 COPY ["Data/Data.csproj", "Data/"]
-RUN dotnet restore "InnerCircle.Authentication.Service/InnerCircle.Authentication.Service.csproj"
+RUN dotnet restore "Api/Api.csproj"
 COPY . .
-WORKDIR "/src/InnerCircle.Authentication.Service"
-RUN dotnet build "InnerCircle.Authentication.Service.csproj" -c Release -o /app/build
+WORKDIR "/src/Api"
+RUN dotnet build "Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "InnerCircle.Authentication.Service.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "InnerCircle.Authentication.Service.dll"]
+ENTRYPOINT ["dotnet", "Api.dll"]
