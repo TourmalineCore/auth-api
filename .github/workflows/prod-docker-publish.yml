@@ -24,7 +24,7 @@ jobs:
           docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:latest
           docker push $GITHUB_REGISTRY/tourmalinecore/inner-circle/auth-api:${{ github.sha }}
 
-  deploy-to-dev-k8s:
+  deploy-to-prod-k8s:
     needs: build-image
     name: Deploy service to k8s for production environment  
     if: github.event_name == 'push'
