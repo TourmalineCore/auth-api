@@ -1,10 +1,14 @@
 ﻿using System.Net;
 using Api.Services;
 using Api.Services.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TourmalineCore.AspNetCore.JwtAuthentication.Core.Filters;
 
 namespace Api.Controllers
 {
+    [Authorize]
+    [RequiresPermission(UserClaimsProvider.CanManageAccounts)]
     [Route("api/auth")]
     public class UsersController : Controller
     {
