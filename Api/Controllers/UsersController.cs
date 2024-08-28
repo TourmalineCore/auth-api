@@ -7,8 +7,6 @@ using TourmalineCore.AspNetCore.JwtAuthentication.Core.Filters;
 
 namespace Api.Controllers
 {
-    [Authorize]
-    [RequiresPermission(UserClaimsProvider.CanManageAccounts)]
     [Route("api/auth")]
     public class UsersController : Controller
     {
@@ -22,6 +20,8 @@ namespace Api.Controllers
             _usersService = usersService;
         }
 
+        [Authorize]
+        [RequiresPermission(UserClaimsProvider.CanManageAccounts)]
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUserAsync([FromBody] RegistrationModel registrationModel)
         {
