@@ -24,6 +24,12 @@ image:
   ##
   pullPolicy: Always
 
+  livenessProbe:
+    enabled: false
+
+  readinessProbe:
+    enabled: false
+    
   pullSecrets: []
     # https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_images.tpl#L49
     # - "{{ include \"common.names.fullname\" . }}-docker-secret"
