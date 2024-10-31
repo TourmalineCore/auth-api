@@ -182,7 +182,7 @@ app.UseRouting();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseJwtAuthentication();
 
 app.MapControllers();
 

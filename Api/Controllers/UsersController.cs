@@ -21,7 +21,7 @@ namespace Api.Controllers
         }
 
         [Authorize]
-        // [RequiresPermission(UserClaimsProvider.CanManageAccounts)]
+        [RequiresPermission(UserClaimsProvider.CanManageAccounts)]
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUserAsync([FromBody] RegistrationModel registrationModel)
         {
