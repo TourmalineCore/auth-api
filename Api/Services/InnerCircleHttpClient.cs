@@ -19,7 +19,7 @@ namespace Api.Services
         public async Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
         {
             var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-welcome-link";
-            await _client.PostAsJsonAsync(mailSenderLink,
+            var response = await _client.PostAsJsonAsync(mailSenderLink,
                 new
                 {
                     To = corporateEmail,
@@ -27,6 +27,8 @@ namespace Api.Services
                     Body =
                         $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
                 });
+
+            System.Console.WriteLine("**** SendMail result: " + response.StatusCode);
         }
 
         public async Task SendPasswordResetLink(string corporateEmail, string passwordResetToken)
