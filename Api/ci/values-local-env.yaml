@@ -38,7 +38,6 @@ service:
 
 ingress:
   enabled: true
-  hostname: "inner-circle.tourmalinecore.com"
   path: /api/auth(/|$)(.*)
   annotations:
     # redirect from http to https
