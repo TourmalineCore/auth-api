@@ -108,7 +108,7 @@ resources:
   ##    memory: 128Mi
   ##
   limits:
-    cpu: 50m
+    cpu: 100m
     memory: 300Mi
   ## Examples:
   ## requests:
