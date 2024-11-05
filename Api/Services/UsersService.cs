@@ -51,7 +51,6 @@ namespace Api.Services
 
             var userPassword = PasswordGenerator.GeneratePassword(5, 5, 5, 5);
             await _userManager.CreateAsync(newUser, userPassword);
-
             try
             {
                 var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(newUser);

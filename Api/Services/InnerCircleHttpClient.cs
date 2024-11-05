@@ -27,6 +27,7 @@ namespace Api.Services
                     Body =
                         $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
                 });
+
         }
 
         public async Task SendPasswordResetLink(string corporateEmail, string passwordResetToken)
