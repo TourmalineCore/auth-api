@@ -3,6 +3,8 @@ using DataAccess.Commands;
 using DataAccess.Models;
 using DataAccess.Queries;
 using Microsoft.AspNetCore.Identity;
+using TourmalineCore.AspNetCore.JwtAuthentication.Identity.Middleware.Registration.Models;
+using RegistrationModel = Api.Services.Models.RegistrationModel;
 
 namespace Api.Services
 {
@@ -61,6 +63,18 @@ namespace Api.Services
                 _logger.LogError(
                     $"[{nameof(UsersService)}]: Couldn't send a link on password creation for user [{registrationModel.CorporateEmail}]. Exception details: {ex.Message}");
             }
+        }
+
+        public async Task DeleteAsync(DeletionModel deletionModel)
+        {
+            var user = await _findUserQuery.FindUserByCorporateEmailAsync(deletionModel.CorporateEmail);
+
+            if(user == null)
+            {
+                _logger.LogError($"[{nameof(UsersService)}]: User with the corporate email [{deletionModel.CorporateEmail}] doesn't exist");
+                throw new NullReferenceException($"User with the corporate email [{deletionModel.CorporateEmail}] doesn't exist");
+            }
+            await _userManager.DeleteAsync(user);
         }
 
         public async Task BlockAsync(long accountId)

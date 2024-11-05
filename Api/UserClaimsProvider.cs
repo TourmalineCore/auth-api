@@ -9,6 +9,8 @@ public class UserClaimsProvider : IUserClaimsProvider
 
     public const string CanManageAccounts = "ManageAccounts";
 
+    public const string IsAccountsHardDeleteAllowed = "IsAccountsHardDeleteAllowed";
+
     public Task<List<Claim>> GetUserClaimsAsync(string login)
     {
         throw new NotImplementedException();
