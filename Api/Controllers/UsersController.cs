@@ -38,7 +38,7 @@ namespace Api.Controllers
 
         [Authorize]
         [RequiresPermission(UserClaimsProvider.IsAccountsHardDeleteAllowed)]
-        [HttpPost("remove")]
+        [HttpPost("delete-user")]
         public async Task<ActionResult> DeleteUserAsync([FromBody] DeletionModel deletionModel)
         {
             try
