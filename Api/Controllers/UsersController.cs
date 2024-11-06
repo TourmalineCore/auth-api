@@ -36,6 +36,22 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize]
+        [RequiresPermission(UserClaimsProvider.IsAccountsHardDeleteAllowed)]
+        [HttpPost("delete-user")]
+        public async Task<ActionResult> DeleteUserAsync([FromBody] DeletionModel deletionModel)
+        {
+            try
+            {
+                await _usersService.DeleteAsync(deletionModel);
+                return StatusCode(CreatedStatusCode);
+            }
+            catch(Exception ex)
+            {
+                return Problem(ex.Message, null, InternalServerErrorCode);
+            }
+        }
+
         [HttpPost("reset")]
         public Task RegisterUser([FromQuery] string corporateEmail)
         {
