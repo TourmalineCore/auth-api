@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Web;
 using Api.Services.Options;
 using Microsoft.Extensions.Options;

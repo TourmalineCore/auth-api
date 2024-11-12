@@ -1,4 +1,4 @@
-﻿using Api.Services.Models;
+using Api.Services.Models;
 using DataAccess.Commands;
 using DataAccess.Models;
 using DataAccess.Queries;
@@ -40,7 +40,7 @@ namespace Api.Services
         {
             var user = await _findUserQuery.FindUserByCorporateEmailAsync(registrationModel.CorporateEmail);
 
-            if(user != null)
+            if (user != null)
             {
                 throw new NullReferenceException($"User with the corporate email [{registrationModel.CorporateEmail}] already exists");
             }
@@ -58,7 +58,7 @@ namespace Api.Services
                 var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(newUser);
                 await _innerCircleHttpClient.SendPasswordCreationLink(registrationModel.CorporateEmail, passwordResetToken);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(
                     $"[{nameof(UsersService)}]: Couldn't send a link on password creation for user [{registrationModel.CorporateEmail}]. Exception details: {ex.Message}");
@@ -69,7 +69,7 @@ namespace Api.Services
         {
             var user = await _findUserQuery.FindUserByCorporateEmailAsync(deletionModel.CorporateEmail);
 
-            if(user == null)
+            if (user == null)
             {
                 _logger.LogError($"[{nameof(UsersService)}]: User with the corporate email [{deletionModel.CorporateEmail}] doesn't exist");
                 throw new NullReferenceException($"User with the corporate email [{deletionModel.CorporateEmail}] doesn't exist");
@@ -90,8 +90,11 @@ namespace Api.Services
         public async Task ResetPasswordAsync(string corporateEmail)
         {
             var user = await _findUserQuery.FindUserByCorporateEmailAsync(corporateEmail);
-            if(user == null)
+            if (user == null)
+            {
                 throw new NullReferenceException("User doesn't exists");
+            }
+
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             await _innerCircleHttpClient.SendPasswordResetLink(corporateEmail, resetToken);
         }
@@ -100,7 +103,7 @@ namespace Api.Services
         {
             var user = await _findUserQuery.FindUserByCorporateEmailAsync(passwordChangeModel.CorporateEmail);
 
-            if(user == null)
+            if (user == null)
             {
                 throw new NullReferenceException($"User with the corporate email [{passwordChangeModel.CorporateEmail}] doesn't exists");
             }
@@ -108,14 +111,14 @@ namespace Api.Services
             var passwordResetTokenIsValid = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider,
                 UserManager<User>.ResetPasswordTokenPurpose, passwordChangeModel.PasswordResetToken);
 
-            if(!passwordResetTokenIsValid)
+            if (!passwordResetTokenIsValid)
             {
                 throw new Exception("Password reset token is invalid");
             }
 
             var newPasswordValidationResult = await _passwordValidator.ValidateAsync(_userManager, user, passwordChangeModel.NewPassword);
 
-            if(!newPasswordValidationResult.Succeeded)
+            if (!newPasswordValidationResult.Succeeded)
             {
                 throw new ArgumentException("New password is invalid");
             }

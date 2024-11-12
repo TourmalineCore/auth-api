@@ -1,4 +1,4 @@
-﻿namespace Api.Services.Options
+namespace Api.Services.Options
 {
     public class InnerCircleServiceUrls
     {
