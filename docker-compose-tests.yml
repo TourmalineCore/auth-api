@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
-  db-test:
+  auth-db-test:
     image: postgres:14.2-alpine
     restart: always
-    container_name: 'db-test'
+    container_name: 'auth-db-test'
     networks:
       - tests
     environment:
@@ -12,14 +10,15 @@ services:
       POSTGRES_PASSWORD: postgres-password
       POSTGRES_DB: TCAuthTest
     ports:
-      - 10001:5432
+      - 11001:5432
       
-  tests:
+  auth-tests:
+    container_name: 'auth-tests'
     build: 
       dockerfile: Tests/Dockerfile
       context: .
     depends_on:
-      - db-test
+      - auth-db-test
     networks:
       - tests
     volumes:
