@@ -1,4 +1,4 @@
-﻿namespace Api.Services.Models
+namespace Api.Services.Models
 {
     public class DeletionModel
     {

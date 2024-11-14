@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Api.Services;
 using Api.Services.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +30,7 @@ namespace Api.Controllers
                 await _usersService.RegisterAsync(registrationModel);
                 return StatusCode(CreatedStatusCode);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem(ex.Message, null, InternalServerErrorCode);
             }
@@ -46,7 +46,7 @@ namespace Api.Controllers
                 await _usersService.DeleteAsync(deletionModel);
                 return StatusCode(CreatedStatusCode);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem(ex.Message, null, InternalServerErrorCode);
             }
@@ -66,7 +66,7 @@ namespace Api.Controllers
                 await _usersService.ChangePasswordAsync(passwordChangeModel);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Problem(ex.Message, null, InternalServerErrorCode);
             }

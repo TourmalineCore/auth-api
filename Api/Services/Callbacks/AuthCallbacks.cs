@@ -1,4 +1,4 @@
-﻿using TourmalineCore.AspNetCore.JwtAuthentication.Core.Middlewares.Login.Models;
+using TourmalineCore.AspNetCore.JwtAuthentication.Core.Middlewares.Login.Models;
 
 namespace Api.Services.Callbacks;
 

@@ -1,4 +1,4 @@
-﻿namespace Api.Services
+namespace Api.Services
 {
     public class PasswordGenerator
     {
@@ -12,29 +12,37 @@
             var random = new Random();
 
             var generated = "!";
-            for(var i = 1; i <= lowercase; i++)
+            for (var i = 1; i <= lowercase; i++)
+            {
                 generated = generated.Insert(
                     random.Next(generated.Length),
                     lowers[random.Next(lowers.Length - 1)].ToString()
                 );
+            }
 
-            for(var i = 1; i <= uppercase; i++)
+            for (var i = 1; i <= uppercase; i++)
+            {
                 generated = generated.Insert(
                     random.Next(generated.Length),
                     uppers[random.Next(uppers.Length - 1)].ToString()
                 );
+            }
 
-            for(var i = 1; i <= numerics; i++)
+            for (var i = 1; i <= numerics; i++)
+            {
                 generated = generated.Insert(
                     random.Next(generated.Length),
                     number[random.Next(number.Length - 1)].ToString()
                 );
+            }
 
-            for(var i = 1; i <= symbols; i++)
+            for (var i = 1; i <= symbols; i++)
+            {
                 generated = generated.Insert(
                     random.Next(generated.Length),
                     symbol[random.Next(symbol.Length - 1)].ToString()
                 );
+            }
 
             return generated.Replace("!", string.Empty);
         }

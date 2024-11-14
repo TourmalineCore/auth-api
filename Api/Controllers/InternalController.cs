@@ -1,4 +1,4 @@
-﻿using Api.Services;
+using Api.Services;
 using Api.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +22,7 @@ public class InternalController : Controller
             await _usersService.BlockAsync(req.AccountId);
             return Ok();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return Problem(ex.Message, nameof(InternalController), StatusCodes.Status500InternalServerError);
         }
@@ -36,7 +36,7 @@ public class InternalController : Controller
             await _usersService.UnblockAsync(req.AccountId);
             return Ok();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return Problem(ex.Message, nameof(InternalController), StatusCodes.Status500InternalServerError);
         }

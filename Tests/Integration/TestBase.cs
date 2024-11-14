@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -66,10 +66,10 @@ public class TestBase : IClassFixture<WebApplicationFactory<Program>>
         string password)
     {
         var body = JsonContent.Create(new RegistrationRequestModel
-            {
-                Login = login,
-                Password = password
-            }
+        {
+            Login = login,
+            Password = password
+        }
         );
 
         var response = await _client.PostAsync(RegisterUrl, body);
@@ -83,10 +83,10 @@ public class TestBase : IClassFixture<WebApplicationFactory<Program>>
         string password)
     {
         var body = JsonContent.Create(new LoginRequestModel
-            {
-                Login = login,
-                Password = password
-            }
+        {
+            Login = login,
+            Password = password
+        }
         );
 
         var response = await _client.PostAsync(LoginUrl, body);
@@ -102,9 +102,9 @@ public class TestBase : IClassFixture<WebApplicationFactory<Program>>
         AuthResponseModel authResponseModel)
     {
         var body = JsonContent.Create(new RefreshTokenRequestModel
-            {
-                RefreshTokenValue = Guid.Parse(authResponseModel.RefreshToken.Value)
-            }
+        {
+            RefreshTokenValue = Guid.Parse(authResponseModel.RefreshToken.Value)
+        }
         );
 
         var response = await _client.PostAsync(RefreshUrl, body);
@@ -119,9 +119,9 @@ public class TestBase : IClassFixture<WebApplicationFactory<Program>>
     internal async Task<HttpStatusCode> LogoutAsync(AuthResponseModel authResponseModel)
     {
         var body = JsonContent.Create(new RefreshTokenRequestModel
-            {
-                RefreshTokenValue = Guid.Parse(authResponseModel.RefreshToken.Value)
-            }
+        {
+            RefreshTokenValue = Guid.Parse(authResponseModel.RefreshToken.Value)
+        }
         );
 
         var response = await _client.PostAsync(LogoutUrl, body);

@@ -20,10 +20,6 @@
 **/docker-compose*
 **/.dockerignore
 
-# .Net project settings (exclude only main config file)
-**/appsettings*.json
-!**/appsettings.json
-
 # CI 
 WbAnalyticsApi/ci/
 **/.gitlab-ci.yml

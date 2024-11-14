@@ -19,7 +19,7 @@ public class GetUserQuery
             .Users
             .SingleOrDefaultAsync(x => x.AccountId == accountId);
 
-        if(user == null)
+        if (user == null)
         {
             throw new NullReferenceException("User not found");
         }

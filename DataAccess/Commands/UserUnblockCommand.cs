@@ -1,4 +1,4 @@
-﻿using DataAccess;
+using DataAccess;
 using DataAccess.Queries;
 
 namespace DataAccess.Commands;

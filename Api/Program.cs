@@ -158,21 +158,21 @@ using var serviceScope = app.Services.CreateScope();
 app
     .OnLoginExecuting(serviceScope.ServiceProvider.GetRequiredService<AuthCallbacks>().OnLoginExecuting)
     .OnLoginExecuted(serviceScope.ServiceProvider.GetRequiredService<AuthCallbacks>().OnLoginExecuted)
-    
+
     .UseDefaultLoginMiddleware(new LoginEndpointOptions
-        {
-            LoginEndpointRoute = "/api/auth/login"
-        }
+    {
+        LoginEndpointRoute = "/api/auth/login"
+    }
     )
     .UseRefreshTokenMiddleware(new RefreshEndpointOptions
-        {
-            RefreshEndpointRoute = "/api/auth/refresh"
-        }
+    {
+        RefreshEndpointRoute = "/api/auth/refresh"
+    }
     )
     .UseRefreshTokenLogoutMiddleware(new LogoutEndpointOptions
-        {
-            LogoutEndpointRoute = "/api/auth/logout"
-        }
+    {
+        LogoutEndpointRoute = "/api/auth/logout"
+    }
     );
 
 var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();

@@ -25,7 +25,7 @@ namespace Api.Services.Users
         {
             var user = await _userQuery.FindUserByCorporateEmailAsync(username);
 
-            if(user == null)
+            if (user == null)
             {
                 _logger.LogWarning(
                     $"[{nameof(UserCredentialsValidator)}]: User with credentials [{username}] not found.");
@@ -34,15 +34,17 @@ namespace Api.Services.Users
 
             var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
 
-            if(!isValidPassword)
+            if (!isValidPassword)
             {
                 _logger.LogWarning(
                     $"[{nameof(UserCredentialsValidator)}]: The password [{password}] is invalid for a user [{username}]");
                 return false;
             }
 
-            if(!user.IsBlocked)
+            if (!user.IsBlocked)
+            {
                 return true;
+            }
 
             _logger.LogWarning(
                 $"[{nameof(UserCredentialsValidator)}]: User with credentials [{username}] was blocked.");
