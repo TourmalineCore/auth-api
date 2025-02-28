@@ -24,13 +24,13 @@ This project is based on the [TourmalineCore.AspNetCore.JwtAuthentication](https
 erDiagram
     AspNetRoleClaims{
         int4 Id PK
-        int8 RoleId FK
+        bigint RoleId FK
         text ClaimType
         text ClaimValue
     }
 
     AspNetRoles{
-        int8 Id PK
+        bigint Id PK
         varchar Name
         varchar NormalizedName
         text ConcurrencyStamp
@@ -38,7 +38,7 @@ erDiagram
 
     AspNetUserClaims{
         int4 Id PK
-        int8 UserId FK
+        bigint UserId FK
         text ClaimType
         text ClaimValue
     }
@@ -47,23 +47,23 @@ erDiagram
         text LoginProvider PK
         text ProviderKey PK
         text ProviderDisplayName
-        int8 UserId FK
+        bigint UserId FK
     }
 
     AspNetUserRoles{
-        int8 UserId PK, FK
-        int8 RoleId PK, FK
+        bigint UserId PK, FK
+        bigint RoleId PK, FK
     }
 
     AspNetUserTokens{
-        int8 UserId PK, FK
+        bigint UserId PK, FK
         text LoginProvider PK
         text Name PK
         text Value
     }
 
     AspNetUsers{
-        int8 Id PK
+        bigint Id PK
         bool IsBlocked
         varchar UserName
         varchar NormalizedUserName
@@ -79,16 +79,16 @@ erDiagram
         timestamptz LockoutEnd
         bool LockoutEnabled
         int4 AccessFailedCount
-        int8 AccountId
+        bigint AccountId
     }
 
     RefreshToken{
-        int8 Id
+        bigint Id
         uuid Value
         timestamptz ExpiresIn
         bool IsActive
         text ClientFingerPrint
-        int8 UserId FK
+        bigint UserId FK
         timestamptz ExpiredAtUtc
     }
 
