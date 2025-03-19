@@ -46,6 +46,7 @@ namespace Api.Services
         public async Task<List<string>> GetPermissions(long accountId)
         {
             var accountPermissionsLink = $"{_urls.AccountsServiceUrl}/internal/account-permissions/{accountId}";
+            Console.WriteLine("!!!!!!!" + accountPermissionsLink);
             var response = await _client.GetStringAsync(accountPermissionsLink);
             return JsonSerializer.Deserialize<List<string>>(response);
         }
