@@ -103,10 +103,10 @@ replicaCount: 1
 ##
 resources:
   limits:
-    memory: 250Mi
+    memory: 300Mi
   requests:
     cpu: 250m
-    memory: 250Mi
+    memory: 300Mi
 ## @param containerPorts.http Port to expose at ASP.NET Core container level
 ##
 containerPorts:
