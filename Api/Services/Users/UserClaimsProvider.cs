@@ -18,6 +18,8 @@ namespace Api.Services.Users
 
         private const string CorporateEmailClaimType = "corporateEmail";
 
+        private const string EmployeeIdClaimType = "employeeId";
+
         public UserClaimsProvider(
             IFindUserQuery userQuery,
             ILogger<UserClaimsProvider> logger,
@@ -33,13 +35,14 @@ namespace Api.Services.Users
             var user = await _userQuery.FindUserByCorporateEmailAsync(login);
             var privileges = await _innerCircleHttpClient.GetPermissions(user.AccountId);
             var tenantId = await _innerCircleHttpClient.GetTenantId(user.AccountId);
+            var employee = await _innerCircleHttpClient.GetEmployeeAsync(login);
 
             var claims = new List<Claim>
             {
                 new (NameIdentifierClaimType, login),
                 new (CorporateEmailClaimType, user.UserName),
-                new (TenantIdClaimType, tenantId.ToString())
-
+                new (TenantIdClaimType, tenantId.ToString()),
+                new (EmployeeIdClaimType, employee.Id.ToString())
             };
             privileges.ForEach(x => claims.Add(new Claim(PermissionsClaimType, x.ToString())));
 
