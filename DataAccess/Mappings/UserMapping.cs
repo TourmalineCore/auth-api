@@ -28,6 +28,22 @@ public class UserMapping : IEntityTypeConfiguration<User>
             },
             new
             {
+                Id = 3L,
+                IsBlocked = false,
+                UserName = "trial@tourmalinecore.com",
+                NormalizedUserName = "TRIAL@TOURMALINECORE.COM",
+                EmailConfirmed = false,
+                PasswordHash = "AQAAAAIAAYagAAAAEMjyazORDOYnqIl3xzIAWWw1SBxxuOZ9yuh84b/RLk46r3JlVzkeMjbXZGOmHSu9mw==",
+                SecurityStamp = "90c670cf-30e0-4de8-84db-83fd5ad03e94",
+                ConcurrencyStamp = "598bfed1-7f02-4ba9-bf1d-2d4a6b5c9fda",
+                PhoneNumberConfirmed = false,
+                TwoFactorEnabled = false,
+                LockoutEnabled = true,
+                AccessFailedCount = 0,
+                AccountId = 3L
+            },
+            new
+            {
                 Id = 2L,
                 IsBlocked = false,
                 UserName = "inner-circle-admin@tourmalinecore.com",
