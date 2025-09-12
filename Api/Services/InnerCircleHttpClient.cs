@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Web;
 using Api.Services.Options;
+using DataAccess.Models;
 using Microsoft.Extensions.Options;
 
 namespace Api.Services
@@ -55,6 +56,13 @@ namespace Api.Services
             var link = $"{_urls.AccountsServiceUrl}/internal/get-tenantId-by-accountId/{accountId}";
             var response = await _client.GetStringAsync(link);
             return JsonSerializer.Deserialize<long>(response);
+        }
+
+        public async Task<Employee> GetEmployeeAsync(string corporateEmail)
+        {
+            var link = $"{_urls.EmployeesServiceUrl}/internal/get-employee?corporateEmail={corporateEmail}";
+            var response = await _client.GetStringAsync(link);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<Employee>(response);
         }
     }
 }

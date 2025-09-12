@@ -48,6 +48,7 @@ jobs:
             --set "extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl=${{ secrets.DEV_MAIL_SERVICE_URL }}" \
             --set "extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl=${{ secrets.DEV_AUTH_UI_SERVICE_URL }}" \
             --set "extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl=${{ secrets.DEV_ACCOUNTS_SERVICE_URL }}" \
+            --set "extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl=${{ secrets.DEV_EMPLOYEES_SERVICE_URL }}" \
             "${RELEASE_NAME}" \
             bitnami/aspnet-core --version 4.4.7
           kubeconfig: "${{ secrets.DEV_KUBECONFIG }}"
