@@ -1,0 +1,97 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  # this is needed to wait for the new docker image to be build and published to the registry
+  # so that we can use the image to run ui of the needed commit related version as part of local-env
+  # the idea is taken from here https://stackoverflow.com/a/71489231
+  push_to_registry:
+    uses: ./.github/workflows/docker-build-and-push.yml
+    # without this it cannot login to the registry
+    secrets: inherit
+
+  e2e-test-without-local-env:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run service via docker-compose and run Karate-tests
+    # Hide credentials and token from logs, get the number of failed and passed tests
+    # Find text with 'failed' and 'passed' in logs from karate-testing container
+      run: |
+        LOGS=$(docker compose --profile MockForPullRequest up --abort-on-container-exit)
+        FILTERED_LOGS=$(echo "$LOGS" | sed -E 's/"login":"[^"]*"/"login":"****"/g' \
+                                 | sed -E 's/"password":"[^"]*"/"password":"****"/g' \
+                                 | sed -E 's/"accessToken":[^,}]*"[^"]*"/"accessToken":"****"/g' \
+                                 | sed -E 's/"Authorization":"[^"]*"/"Authorization":"****"/g' \
+                                 | sed -E 's/"X-DEBUG-TOKEN":[^,}]*"[^"]*"/"X-DEBUG-TOKEN":"****"/g' \
+                                 | sed -E 's/accessToken":\{[^}]*\}/accessToken":{"value":"****"}/g' \
+                                 | sed -E 's/X-DEBUG-TOKEN: [^ ]*/X-DEBUG-TOKEN: ****/g') 
+        echo "$FILTERED_LOGS"
+        FAILED=$(echo "$FILTERED_LOGS" | grep -oP 'failed: *\K\d+')
+        PASSED=$(echo "$FILTERED_LOGS" | grep -oP 'passed: *\K\d+')
+        echo "Failed tests: $FAILED"
+        echo "Passed tests: $PASSED"
+        if [ "$FAILED" -gt 0 ]; then
+          echo "Failed tests found! Failing the pipeline..."
+          exit 1
+        fi
+        if [ "$PASSED" -eq 0 ]; then
+          echo "No tests passed! Failing the pipeline..."
+          exit 1
+        fi        
+
+  e2e-test-with-local-env:
+    name: Run karate tests in local env
+    runs-on: ubuntu-22.04
+    needs: [push_to_registry]
+    steps:
+      - name: Checkout local-env
+        uses: actions/checkout@v4
+        with:
+          repository: TourmalineCore/inner-circle-local-env
+
+      - name: Deploy Local Env to Kind k8s
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: |
+            # we need to override "latest" image tag of ui inside local-env to run e2e against the current commit ui version and not against latest from master
+            yq -i '.image.tag = "sha-${{ github.sha }}"' deploy/values-auth-api.yaml.gotmpl
+
+            kind create cluster --name inner-circle --config kind-local-config.yaml --kubeconfig ./.inner-circle-cluster-kubeconfig
+            # we need to properly expose KUBECONFIG as an absolute path, pwd prints current working directory path
+            export KUBECONFIG=$(pwd)/.inner-circle-cluster-kubeconfig
+
+            helmfile --environment local --namespace local -f deploy/helmfile.yaml apply
+          push: never
+          # this variable is used by local-env helmfile to use current feature branch helm chart values.yaml file
+          # this is needed for a case when as part of the feature the chart was changed and is different from master branch
+          # this should properly fill the feature branch name in spite of the pipeline trigger source (PR, commit, etc.)
+          # https://stackoverflow.com/a/71158878
+          env: |
+            AUTH_API_BRANCH=${{ github.head_ref || github.ref_name }}
+
+      - name: Checkout api
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+        
+      - name: Download Karate JAR
+        run: |
+          curl -L https://github.com/karatelabs/karate/releases/download/v1.5.1/karate-1.5.1.jar -o karate.jar
+
+      - name: Run Karate Tests
+        run: |
+          java -jar karate.jar .
+        env:
+          AUTH_API_ROOT_URL: "http://localhost:30090/api"
+          API_ROOT_URL: "http://localhost:30090"
+          AUTH_LOGIN: "ceo@tourmalinecore.com"
+          AUTH_PASSWORD: "cEoPa$$wo1d"

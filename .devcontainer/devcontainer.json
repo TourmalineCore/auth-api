@@ -1,0 +1,33 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Existing Dockerfile",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+		"dockerfile": "../e2e/KarateDockerfile"
+	},
+	"runArgs": [
+		"--network=host"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"karatelabs.karate",
+				"bierner.markdown-mermaid"
+			]
+		}
+	},
+	"containerEnv": {
+		"AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "first-tenant-login-with-all-permissions",
+		"AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "first-tenant-password-with-all-permissions",
+		"AUTH_SECOND_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "second-tenant-login-with-all-permissions",
+		"AUTH_SECOND_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "second-tenant-password-with-all-permissions",
+		"AUTH_LOGIN_WITHOUT_PERMISSIONS": "first-tenant-login-without-permissions",
+		"AUTH_PASSWORD_WITHOUT_PERMISSIONS": "first-tenant-password-without-permissions",
+		"AUTH_API_ROOT_URL": "http://localhost:8503",
+		"API_ROOT_URL": "http://localhost:6503",
+		"SHOULD_USE_FAKE_EXTERNAL_DEPENDENCIES": "true"
+	}
+}
