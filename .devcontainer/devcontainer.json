@@ -20,14 +20,6 @@
 		}
 	},
 	"containerEnv": {
-		"AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "first-tenant-login-with-all-permissions",
-		"AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "first-tenant-password-with-all-permissions",
-		"AUTH_SECOND_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "second-tenant-login-with-all-permissions",
-		"AUTH_SECOND_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "second-tenant-password-with-all-permissions",
-		"AUTH_LOGIN_WITHOUT_PERMISSIONS": "first-tenant-login-without-permissions",
-		"AUTH_PASSWORD_WITHOUT_PERMISSIONS": "first-tenant-password-without-permissions",
-		"AUTH_API_ROOT_URL": "http://localhost:8503",
 		"API_ROOT_URL": "http://localhost:6503",
-		"SHOULD_USE_FAKE_EXTERNAL_DEPENDENCIES": "true"
 	}
 }
