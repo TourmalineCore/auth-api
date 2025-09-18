@@ -13,7 +13,7 @@
 ##
 image:
   registry: ghcr.io
-  repository: tourmalinecore/inner-circle-auth-api
+  repository: tourmalinecore/auth-api
   tag: latest
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
