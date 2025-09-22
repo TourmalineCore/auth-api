@@ -10,20 +10,6 @@ docker compose --profile MockForDevelopment up --build
 
 ## Karate Tests
 
-### Run Karate Tests Against Api Running in IDE (not Docker Compose)
-
-Run Db and MockServer executing the following command (don't close the terminal unless you want to stop the containers)
-
-```bash
-docker compose --profile MockForDevelopment up --build
-```
-
-Then execute following command inside of the dev-container
-
-```bash
-API_ROOT_URL=http://host.docker.internal:5503 java -jar /karate.jar .
-```
-
 ### Run Karate against Api, Db, and MockServer in Docker Compose
 
 Run Api, Db, and MockServer executing the following command (don't close the terminal unless you want to stop the containers)
@@ -33,6 +19,8 @@ docker compose --profile MockForTests up --build
 ```
 
 Then execute following command inside of the dev-container
+
+Note: for now you need to ask AUTH_LOGIN and AUTH_PASSWORD and add them to devcontainer.json file
 
 ```bash
 java -jar /karate.jar .
@@ -44,12 +32,6 @@ Run the docker compose with MockForPullRequest profile executing the following c
 
 ```bash
 docker compose --profile MockForPullRequest up --build
-```
-
->Note: this also includes Karate Tests run by default. However, if you want to run the test again from Dev Container execute:
-
-```bash
-java -jar /karate.jar .
 ```
 
 ## Database scheme 
