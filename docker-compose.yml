@@ -82,8 +82,8 @@ services:
       - .:/karate
     environment:
       API_ROOT_URL: "http://auth-api/api"
-      AUTH_LOGIN: "aaa"
-      AUTH_PASSWORD: "aaa"
+      AUTH_LOGIN: ${TEST_AUTH_LOGIN}
+      AUTH_PASSWORD: ${TEST_AUTH_PASSWORD}
     networks:
       - auth-api-network
 
