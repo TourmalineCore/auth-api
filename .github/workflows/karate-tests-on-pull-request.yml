@@ -59,7 +59,15 @@ jobs:
         with:
           runCmd: |
             # we need to override "latest" image tag of ui inside local-env to run e2e against the current commit ui version and not against latest from master
-            yq -i '.image.tag = "sha-${{ github.sha }}"' deploy/values-auth-api.yaml.gotmpl
+            # We tried to use yq to change the image tag, but in the values files for helmfile we have non-yaml code that yq can`t parse or ignore
+            # so for that reason we use Stream EDitor which can find needed string using regular expressions and change it to a new value
+            # The -i flag is needed to write new image tag directly to values file
+            sed -i "0,/tag:.*/s//tag: \"sha-${{ github.sha }}\"/" deploy/values-auth-api.yaml.gotmpl
+
+             # we need to override "latest" ref of service chart inside local-env to run tests against the current commit service chart version and not against latest from master
+            sed -i "0,/git+https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git?ref=.*/s//git+https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git?ref=${{ github.sha }}/" deploy/helmfile.yaml
+            
+            sed -i "0,/git::https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git@\/ci\/values-local-env.yaml?ref=.*/s//git::https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git@\/ci\/values-local-env.yaml?ref=${{ github.sha }}/" deploy/helmfile.yaml
 
             kind create cluster --name inner-circle --config kind-local-config.yaml --kubeconfig ./.inner-circle-cluster-kubeconfig
             # we need to properly expose KUBECONFIG as an absolute path, pwd prints current working directory path
@@ -67,12 +75,6 @@ jobs:
 
             helmfile --environment local --namespace local -f deploy/helmfile.yaml apply
           push: never
-          # this variable is used by local-env helmfile to use current feature branch helm chart values.yaml file
-          # this is needed for a case when as part of the feature the chart was changed and is different from master branch
-          # this should properly fill the feature branch name in spite of the pipeline trigger source (PR, commit, etc.)
-          # https://stackoverflow.com/a/71158878
-          env: |
-            AUTH_API_BRANCH=${{ github.head_ref || github.ref_name }}
 
       - name: Checkout api
         uses: actions/checkout@v4

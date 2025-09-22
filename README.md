@@ -1,4 +1,4 @@
-# inner-circle-auth-api
+# auth-api
 
 ## Run in Visual Studio
 
