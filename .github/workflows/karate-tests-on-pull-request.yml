@@ -18,11 +18,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-    # Get secrets to sign in
-    - name: Set up Docker Compose environment variables
-      run: |
-        echo TEST_AUTH_LOGIN=${{ secrets.TEST_AUTH_LOGIN }} >> .env
-        echo TEST_AUTH_PASSWORD=${{ secrets.TEST_AUTH_PASSWORD }} >> .env
     - name: Run service via docker-compose and run Karate-tests
     # Hide credentials and token from logs, get the number of failed and passed tests
     # Find text with 'failed' and 'passed' in logs from karate-testing container
@@ -47,7 +42,10 @@ jobs:
         if [ "$PASSED" -eq 0 ]; then
           echo "No tests passed! Failing the pipeline..."
           exit 1
-        fi        
+        fi
+      env:
+        TEST_AUTH_LOGIN: ${{ secrets.TEST_AUTH_LOGIN }}
+        TEST_AUTH_PASSWORD: ${{ secrets.TEST_AUTH_PASSWORD }}
 
   e2e-test-with-local-env:
     name: Run karate tests in local env
