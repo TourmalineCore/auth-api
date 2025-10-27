@@ -28,4 +28,3 @@ Scenario: Check employeeId in token
     * def accessToken = karate.toMap(response.accessToken.value)
     * def employeeId = jsUtils().getEmployeeIdFromToken(accessToken)
     * match employeeId == '#notnull'
-
