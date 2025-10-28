@@ -35,7 +35,7 @@ jobs:
           helmfile-version: 'v0.164.0'
           helm-version: 'v3.18.0'
           helmfile-args: >
-            apply --suppress-diff --namespace dev-inner-circle -f Api/ci/helmfile.yaml
+            apply --namespace dev-inner-circle -f Api/ci/helmfile.yaml
             --state-values-set image.tag=sha-${{ github.sha }} 
             --state-values-set ingress.enabled=true
             --state-values-set ingress.hostname=${{ secrets.DEV_HOST }}
