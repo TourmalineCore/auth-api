@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/*
 
 jobs:
   # this is needed to wait for the new docker image to be build and published to the registry
@@ -32,9 +33,9 @@ jobs:
         uses: helmfile/helmfile-action@v1.9.0
         with:
           helmfile-version: 'v0.164.0'
-          helm-version: 'v3.14.4'
+          helm-version: 'v3.18.0'
           helmfile-args: >
-            apply --namespace dev-inner-circle -f Api/ci/helmfile.yaml
+            apply --suppress-diff --namespace dev-inner-circle -f Api/ci/helmfile.yaml
             --state-values-set image.tag=sha-${{ github.sha }} 
             --state-values-set ingress.enabled=true
             --state-values-set ingress.hostname=${{ secrets.DEV_HOST }}
