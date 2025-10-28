@@ -56,8 +56,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: TourmalineCore/inner-circle-local-env
-          ref: "feature/add-image-tag-in-auth-api"
-
+          
+      - name: cat values
+        run: cat deploy/values-auth-api.yaml.gotmpl
+        
       - name: Deploy Local Env to Kind k8s
         uses: devcontainers/ci@v0.3
         continue-on-error: true
@@ -82,7 +84,10 @@ jobs:
 
             kubectl logs $(kubectl get pods -l app.kubernetes.io/instance=auth-api -n local -o jsonpath='{.items[0].metadata.name}') -n local
           push: never
-
+          
+      - name: cat values
+        run: cat deploy/values-auth-api.yaml.gotmpl
+        
       - name: Checkout api
         uses: actions/checkout@v4
       
