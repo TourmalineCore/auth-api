@@ -2,7 +2,6 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER root
 WORKDIR /app
 EXPOSE 80
 
@@ -26,5 +25,4 @@ RUN dotnet publish "./Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:Use
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENV ASPNETCORE_HTTP_PORTS=80
 ENTRYPOINT ["dotnet", "Api.dll"]
