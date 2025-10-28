@@ -59,6 +59,7 @@ jobs:
 
       - name: Deploy Local Env to Kind k8s
         uses: devcontainers/ci@v0.3
+        continue-on-error: true
         with:
           runCmd: |
             # we need to override "latest" image tag of ui inside local-env to run e2e against the current commit ui version and not against latest from master
@@ -77,6 +78,8 @@ jobs:
             export KUBECONFIG=$(pwd)/.inner-circle-cluster-kubeconfig
 
             helmfile --environment local --namespace local -f deploy/helmfile.yaml apply
+
+            kubectl logs $(kubectl get pods -l app.kubernetes.io/instance=auth-api -n local -o jsonpath='{.items[0].metadata.name}') -n local
           push: never
 
       - name: Checkout api
