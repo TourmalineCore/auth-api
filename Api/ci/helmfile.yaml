@@ -1,0 +1,25 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+releases:
+  - name: auth-api
+    labels:
+      app: auth-api
+    wait: true
+    chart: bitnami/aspnet-core
+    version: 4.4.7
+    values:
+      - values.yaml
+      - image:
+          tag: "{{ .StateValues.image.tag }}"
+      - ingress:
+          hostname: "{{ .StateValues.ingress.hostname }}"
+      - extraSecretEnvVars:
+          ConnectionStrings__DefaultConnection: "{{ .StateValues.extraSecretEnvVars.ConnectionStrings__DefaultConnection }}"
+          AuthenticationOptions__PublicSigningKey: "{{ .StateValues.extraSecretEnvVars.AuthenticationOptions__PublicSigningKey }}"
+          AuthenticationOptions__PrivateSigningKey: "{{ .StateValues.extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey }}"
+          InnerCircleServiceUrls__MailServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl }}"
+          InnerCircleServiceUrls__AuthUIServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl }}"
+          InnerCircleServiceUrls__AccountsServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl }}"
+          InnerCircleServiceUrls__EmployeesServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl }}"

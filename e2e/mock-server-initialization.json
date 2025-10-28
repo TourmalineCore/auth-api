@@ -1,0 +1,44 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/internal/get-employee",
+      "queryStringParameters": {
+        "corporateEmail": ["trial@tourmalinecore.com"]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": "{ \"id\": 3, \"fullName\": \"Trial Trial Trial\", \"corporateEmail\": \"trial@tourmalinecore.com\", \"tenantId\": 3}",
+      "headers": {
+        "Content-Type": ["application/json"]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/internal/get-tenantId-by-accountId/3"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": "1",
+      "headers": {
+        "Content-Type": ["text/plain; charset=utf-8"]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/internal/account-permissions/3"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": "[\"CanViewBooks\", \"CanTakeBooks\"]",
+      "headers": {
+        "Content-Type": ["application/json"]
+      }
+    }
+  }
+]

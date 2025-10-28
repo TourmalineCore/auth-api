@@ -1,20 +1,38 @@
-# inner-circle-auth-api
+# auth-api
 
-## Launch docker containers
+## Run in Visual Studio
 
-1. You need to create an internal network for configuring interaction between different back-end services.  
-You can do it using the following command in your terminal: `docker network create ic-backend-deb`.  
-Note: If you already has this network, skip this step.
+First run this script to run a db and mocked external deps:
 
-2. Execute the command `docker-compose up -d` from source folder
+```bash
+docker compose --profile MockForDevelopment up --build
+```
 
-## Configurations
+## Karate Tests
 
-- MockForPullRequest - used in PR pipeline to run the service in isolation (no external deps) and run its Karate tests against it
-- MockForDevelopment - used locally when you run the service in Visual Studio e.g. in Debug and don't want to spin up any external deps
-- LocalEnvForDevelopment - used locally when you run the service in Visual Studio and you want to connect to its external deps from Local Env
-- ProdForDevelopment - used locally when you run the service in Visual Studio and want to connect to its external deps from Prod specially dedicated Local Development Tenant
-- ProdForDeployment - used when we run the service in Prod, it shouldn't contain any secrets, it should be a Release build, using real Prod external deps
+### Run Karate against Api, Db, and MockServer in Docker Compose
+
+Run Api, Db, and MockServer executing the following command (don't close the terminal unless you want to stop the containers)
+
+```bash
+docker compose --profile MockForTests up --build
+```
+
+Then execute following command inside of the dev-container
+
+Note: for now you need to ask AUTH_LOGIN and AUTH_PASSWORD and add them to devcontainer.json file
+
+```bash
+java -jar /karate.jar .
+```
+
+### Running Karate Tests, Api, Db, and MockServer in Docker Compose
+
+Run the docker compose with MockForPullRequest profile executing the following command (don't close the terminal unless you want to stop the containers)
+
+```bash
+docker compose --profile MockForPullRequest up --build
+```
 
 ## Database scheme 
 
