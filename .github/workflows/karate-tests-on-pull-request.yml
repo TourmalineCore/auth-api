@@ -50,7 +50,7 @@ jobs:
   e2e-test-with-local-env:
     name: Run karate tests in local env
     runs-on: ubuntu-22.04
-    needs: [push_to_registry]
+    # needs: [push_to_registry]
     steps:
       - name: Checkout local-env
         uses: actions/checkout@v4
@@ -66,7 +66,7 @@ jobs:
             # We tried to use yq to change the image tag, but in the values files for helmfile we have non-yaml code that yq can`t parse or ignore
             # so for that reason we use Stream EDitor which can find needed string using regular expressions and change it to a new value
             # The -i flag is needed to write new image tag directly to values file
-            sed -i "0,/tag:.*/s//tag: \"sha-${{ github.sha }}\"/" deploy/values-auth-api.yaml.gotmpl
+            sed -i "0,/tag:.*/s//tag: \"sha-00f97f61067977dcfd1e44df39365684f61bdbfa\"/" deploy/values-auth-api.yaml.gotmpl
 
              # we need to override "latest" ref of service chart inside local-env to run tests against the current commit service chart version and not against latest from master
             sed -i "0,/git+https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git?ref=.*/s//git+https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git?ref=${{ github.sha }}/" deploy/helmfile.yaml
