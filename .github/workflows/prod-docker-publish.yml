@@ -32,7 +32,7 @@ jobs:
         uses: helmfile/helmfile-action@v1.9.0
         with:
           helmfile-version: 'v0.164.0'
-          helm-version: 'v3.14.4'
+          helm-version: 'v3.18.0'
           helmfile-args: >
             apply --namespace dev-inner-circle -f Api/ci/helmfile.yaml
             --state-values-set image.tag=sha-${{ github.sha }} 
