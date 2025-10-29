@@ -77,9 +77,8 @@ jobs:
             export KUBECONFIG=$(pwd)/.inner-circle-cluster-kubeconfig
 
             helmfile --environment local --namespace local -f deploy/helmfile.yaml apply
-
           push: never
-        
+
       - name: Checkout api
         uses: actions/checkout@v4
       
