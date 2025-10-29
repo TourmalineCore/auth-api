@@ -78,7 +78,6 @@ jobs:
 
             helmfile --environment local --namespace local -f deploy/helmfile.yaml apply
 
-            kubectl logs $(kubectl get pods -l app.kubernetes.io/instance=auth-api -n local -o jsonpath='{.items[0].metadata.name}') -n local
           push: never
         
       - name: Checkout api
