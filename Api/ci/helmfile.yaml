@@ -23,3 +23,4 @@ releases:
           InnerCircleServiceUrls__AuthUIServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl }}"
           InnerCircleServiceUrls__AccountsServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl }}"
           InnerCircleServiceUrls__EmployeesServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl }}"
+          IsLocalMode: "{{ .StateValues.extraSecretEnvVars.IsLocalMode }}"
