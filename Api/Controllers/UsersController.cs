@@ -53,9 +53,30 @@ namespace Api.Controllers
         }
 
         [HttpPost("reset")]
-        public Task RegisterUser([FromQuery] string corporateEmail)
+        public async Task<IActionResult> RegisterUser([FromQuery] string corporateEmail)
         {
-            return _usersService.ResetPasswordAsync(corporateEmail);
+            try
+            {
+                var token = await _usersService.ResetPasswordAsync(corporateEmail);
+                if (token != null)
+                {
+                    return Ok(new
+                    {
+                        passwordResetToken = token
+                    });
+                }
+                else
+                {
+                    return Ok(new
+                    {
+                        message = "Password reset link sent successfully"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message, null, (int)HttpStatusCode.BadRequest);
+            }
         }
 
         [HttpPut("change-password")]
