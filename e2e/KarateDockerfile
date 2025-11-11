@@ -1,10 +1,10 @@
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:17-jre-noble
 
 RUN apt-get update && apt-get install -y curl
 
 RUN apt-get install -y unzip
 
-RUN curl -o /karate.jar -L 'https://github.com/intuit/karate/releases/download/v1.4.1/karate-1.4.1.jar'
+RUN curl -o /karate.jar -L 'https://github.com/intuit/karate/releases/download/v1.5.1/karate-1.5.1.jar'
 
 COPY ./e2e/js-utils.js .
 
