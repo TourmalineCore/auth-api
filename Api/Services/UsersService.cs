@@ -17,7 +17,6 @@ namespace Api.Services
         private readonly IPasswordValidator<User> _passwordValidator;
         private readonly UserBlockCommand _userBlockCommand;
         private readonly UserUnblockCommand _userUnblockCommand;
-        private readonly bool _isLocalMode;
 
         public UsersService(
             UserManager<User> userManager,
@@ -26,8 +25,7 @@ namespace Api.Services
             ILogger<UsersService> logger,
             IPasswordValidator<User> passwordValidator,
             UserBlockCommand userBlockCommand,
-            UserUnblockCommand userUnblockCommand,
-             IConfiguration configuration)
+            UserUnblockCommand userUnblockCommand)
         {
             _userManager = userManager;
             _findUserQuery = findUserQuery;
@@ -36,7 +34,6 @@ namespace Api.Services
             _passwordValidator = passwordValidator;
             _userBlockCommand = userBlockCommand;
             _userUnblockCommand = userUnblockCommand;
-            _isLocalMode = configuration.GetValue<bool>("IsLocalMode");
         }
 
         public async Task RegisterAsync(RegistrationModel registrationModel)
@@ -90,7 +87,7 @@ namespace Api.Services
             await _userUnblockCommand.ExecuteAsync(accountId);
         }
 
-        public async Task<string> ResetPasswordAsync(string corporateEmail)
+        public async Task ResetPasswordAsync(string corporateEmail)
         {
             var user = await _findUserQuery.FindUserByCorporateEmailAsync(corporateEmail);
             if (user == null)
@@ -99,14 +96,7 @@ namespace Api.Services
             }
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-            if (_isLocalMode)
-            {
-                return resetToken;
-            }
-
             await _innerCircleHttpClient.SendPasswordResetLink(corporateEmail, resetToken);
-            return null!;
         }
 
         public async Task ChangePasswordAsync(PasswordChangeModel passwordChangeModel)
