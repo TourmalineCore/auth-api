@@ -52,31 +52,20 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPost("reset")]
-        public async Task<IActionResult> RegisterUser([FromQuery] string corporateEmail)
+        // Add new endpoint to create a user for local env protected with auth and new permission
+        // CanCreateUserWithPasswordBypassingEmailConfirmation (can change)
+        [Authorize]
+        [RequiresPermission(UserClaimsProvider.CanSetUserPasswordBypassingEmailConfirmation)]
+        [HttpPut("set-password")]
+        public Task SetPassword([FromBody] PasswordSetModel passwordSetModel)
         {
-            try
-            {
-                var token = await _usersService.ResetPasswordAsync(corporateEmail);
-                if (token != null)
-                {
-                    return Ok(new
-                    {
-                        passwordResetToken = token
-                    });
-                }
-                else
-                {
-                    return Ok(new
-                    {
-                        message = "Password reset link sent successfully"
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Problem(ex.Message, null, (int)HttpStatusCode.BadRequest);
-            }
+            return _usersService.SetPasswordBypassingEmailConfirmationAsync(passwordSetModel);
+        }
+
+        [HttpPost("reset")]
+        public Task RegisterUser([FromQuery] string corporateEmail)
+        {
+            return _usersService.ResetPasswordAsync(corporateEmail);
         }
 
         [HttpPut("change-password")]

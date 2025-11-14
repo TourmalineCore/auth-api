@@ -135,7 +135,20 @@ namespace Api.Services
 
             await _userManager.ResetPasswordAsync(user, passwordChangeModel.PasswordResetToken,
                 passwordChangeModel.NewPassword);
-                
+        }
+
+        public async Task SetPasswordBypassingEmailConfirmationAsync(PasswordSetModel passwordSetModel)
+        {
+            var user = await _findUserQuery.FindUserByCorporateEmailAsync(passwordSetModel.CorporateEmail);
+
+            if (user == null)
+            {
+                throw new NullReferenceException($"User with the corporate email [{passwordSetModel.CorporateEmail}] doesn't exists");
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            await _userManager.ResetPasswordAsync(user, resetToken, passwordSetModel.NewPassword);
         }
     }
 }
