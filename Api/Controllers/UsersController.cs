@@ -52,6 +52,16 @@ namespace Api.Controllers
             }
         }
 
+        // Add new endpoint to create a user for local env protected with auth and new permission
+        // CanCreateUserWithPasswordBypassingEmailConfirmation (can change)
+        [Authorize]
+        [RequiresPermission(UserClaimsProvider.CanSetUserPasswordBypassingEmailConfirmation)]
+        [HttpPut("set-password")]
+        public Task SetPassword([FromBody] PasswordSetModel passwordSetModel)
+        {
+            return _usersService.SetPasswordBypassingEmailConfirmationAsync(passwordSetModel);
+        }
+
         [HttpPost("reset")]
         public Task RegisterUser([FromQuery] string corporateEmail)
         {
