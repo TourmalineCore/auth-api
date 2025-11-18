@@ -11,6 +11,8 @@ public class UserClaimsProvider : IUserClaimsProvider
 
     public const string IsAccountsHardDeleteAllowed = "IsAccountsHardDeleteAllowed";
 
+    public const string AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed = "AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed";
+
     public Task<List<Claim>> GetUserClaimsAsync(string login)
     {
         throw new NotImplementedException();
