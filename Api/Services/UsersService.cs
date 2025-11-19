@@ -133,7 +133,7 @@ namespace Api.Services
 
             if (user == null)
             {
-                throw new NullReferenceException($"User with the corporate email [{passwordSetModel.CorporateEmail}] doesn't exists");
+                throw new NullReferenceException($"User with the corporate email [{passwordSetModel.CorporateEmail}] doesn't exist");
             }
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
