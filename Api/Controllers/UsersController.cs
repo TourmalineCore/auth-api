@@ -52,6 +52,14 @@ namespace Api.Controllers
             }
         }
 
+        [Authorize]
+        [RequiresPermission(UserClaimsProvider.AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed)]
+        [HttpPost("set-password")]
+        public Task SetPassword([FromBody] PasswordSetModel passwordSetModel)
+        {
+            return _usersService.SetPasswordBypassingEmailConfirmationAsync(passwordSetModel);
+        }
+
         [HttpPost("reset")]
         public Task RegisterUser([FromQuery] string corporateEmail)
         {
