@@ -1,7 +1,6 @@
-namespace Api.Services.Models
+namespace Api.Services.Models;
+
+public class DeletionModel
 {
-    public class DeletionModel
-    {
-        public string CorporateEmail { get; init; }
-    }
+  public string CorporateEmail { get; init; }
 }

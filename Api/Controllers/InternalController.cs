@@ -7,38 +7,38 @@ namespace Api.Controllers;
 [Route("internal")]
 public class InternalController : Controller
 {
-    private readonly UsersService _usersService;
+  private readonly UsersService _usersService;
 
-    public InternalController(UsersService usersService)
-    {
-        _usersService = usersService;
-    }
+  public InternalController(UsersService usersService)
+  {
+    _usersService = usersService;
+  }
 
-    [HttpPost("block-user")]
-    public async Task<ActionResult> BlockAsync([FromBody] BlockingRequest req)
+  [HttpPost("block-user")]
+  public async Task<ActionResult> BlockAsync([FromBody] BlockingRequest req)
+  {
+    try
     {
-        try
-        {
-            await _usersService.BlockAsync(req.AccountId);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message, nameof(InternalController), StatusCodes.Status500InternalServerError);
-        }
+      await _usersService.BlockAsync(req.AccountId);
+      return Ok();
     }
+    catch (Exception ex)
+    {
+      return Problem(ex.Message, nameof(InternalController), StatusCodes.Status500InternalServerError);
+    }
+  }
 
-    [HttpPost("unblock-user")]
-    public async Task<ActionResult> UnblockAsync([FromBody] UnblockingRequest req)
+  [HttpPost("unblock-user")]
+  public async Task<ActionResult> UnblockAsync([FromBody] UnblockingRequest req)
+  {
+    try
     {
-        try
-        {
-            await _usersService.UnblockAsync(req.AccountId);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return Problem(ex.Message, nameof(InternalController), StatusCodes.Status500InternalServerError);
-        }
+      await _usersService.UnblockAsync(req.AccountId);
+      return Ok();
     }
+    catch (Exception ex)
+    {
+      return Problem(ex.Message, nameof(InternalController), StatusCodes.Status500InternalServerError);
+    }
+  }
 }
