@@ -5,16 +5,14 @@ namespace Api;
 
 public class UserClaimsProvider : IUserClaimsProvider
 {
-    public const string PermissionClaimType = "permissions";
+  public const string PermissionClaimType = "permissions";
 
-    public const string CanManageAccounts = "ManageAccounts";
+  public const string CanManageAccounts = "ManageAccounts";
+  public const string IsAccountsHardDeleteAllowed = "IsAccountsHardDeleteAllowed";
+  public const string AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed = "AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed";
 
-    public const string IsAccountsHardDeleteAllowed = "IsAccountsHardDeleteAllowed";
-
-    public const string AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed = "AUTO_TESTS_ONLY_IsSetUserPasswordBypassingEmailConfirmationAllowed";
-
-    public Task<List<Claim>> GetUserClaimsAsync(string login)
-    {
-        throw new NotImplementedException();
-    }
+  public Task<List<Claim>> GetUserClaimsAsync(string login)
+  {
+    throw new NotImplementedException();
+  }
 }
