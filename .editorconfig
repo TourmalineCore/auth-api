@@ -1,17 +1,26 @@
+# command to run:
+# dotnet format --exclude "**/Migrations/**" --verbosity detailed
+
 [*.cs]
 
 #### Core EditorConfig Options ####
 charset = utf-8
 
 # Indentation and spacing
-indent_size = 4
+indent_size = 2
 indent_style = space
-tab_width = 4
+tab_width = 2
 
 # New line preferences
 end_of_line = lf
-insert_final_newline = false
+insert_final_newline = true
 
+# Wrapping preferences
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = true
+
+# error unnecessary usings
+dotnet_diagnostic.IDE0005.severity = error
 
 #### .NET Coding Conventions ####
 

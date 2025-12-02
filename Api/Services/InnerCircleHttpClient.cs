@@ -4,65 +4,70 @@ using Api.Services.Options;
 using DataAccess.Models;
 using Microsoft.Extensions.Options;
 
-namespace Api.Services
+namespace Api.Services;
+
+public class InnerCircleHttpClient : IInnerCircleHttpClient
 {
-    public class InnerCircleHttpClient : IInnerCircleHttpClient
-    {
-        private readonly HttpClient _client;
-        private readonly InnerCircleServiceUrls _urls;
+  private readonly HttpClient _client;
+  private readonly InnerCircleServiceUrls _urls;
 
-        public InnerCircleHttpClient(IOptions<InnerCircleServiceUrls> urls)
-        {
-            _client = new HttpClient();
-            _urls = urls.Value;
-        }
+  public InnerCircleHttpClient(IOptions<InnerCircleServiceUrls> urls)
+  {
+    _client = new HttpClient();
+    _urls = urls.Value;
+  }
 
-        public async Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
-        {
-            var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-welcome-link";
-            await _client.PostAsJsonAsync(mailSenderLink,
-                new
-                {
-                    To = corporateEmail,
-                    Subject = "Change your password to Tourmaline Core",
-                    Body =
-                        $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
-                });
+  public async Task SendPasswordCreationLink(string corporateEmail, string passwordResetToken)
+  {
+    var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-welcome-link";
 
-        }
+    await _client.PostAsJsonAsync(
+      mailSenderLink,
+      new
+      {
+        To = corporateEmail,
+        Subject = "Change your password to Tourmaline Core",
+        Body = $"Go to this link to set a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
+      }
+    );
+  }
 
-        public async Task SendPasswordResetLink(string corporateEmail, string passwordResetToken)
-        {
-            var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-reset-link";
-            await _client.PostAsJsonAsync(mailSenderLink,
-                new
-                {
-                    To = corporateEmail,
-                    Subject = "Reset your password to Tourmaline Core",
-                    Body =
-                        $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
-                });
-        }
+  public async Task SendPasswordResetLink(string corporateEmail, string passwordResetToken)
+  {
+    var mailSenderLink = $"{_urls.MailServiceUrl}/mail/send-reset-link";
 
-        public async Task<List<string>> GetPermissions(long accountId)
-        {
-            var accountPermissionsLink = $"{_urls.AccountsServiceUrl}/internal/account-permissions/{accountId}";
-            var response = await _client.GetStringAsync(accountPermissionsLink);
-            return JsonSerializer.Deserialize<List<string>>(response);
-        }
+    await _client.PostAsJsonAsync(
+      mailSenderLink,
+      new
+      {
+        To = corporateEmail,
+        Subject = "Reset your password to Tourmaline Core",
+        Body = $"Go to this link to reset a password for your account: {_urls.AuthUIServiceUrl}/change-password?passwordResetToken={HttpUtility.UrlEncode(passwordResetToken)}&corporateEmail={corporateEmail}"
+      }
+    );
+  }
 
-        public async Task<long> GetTenantId(long accountId)
-        {
-            var link = $"{_urls.AccountsServiceUrl}/internal/get-tenantId-by-accountId/{accountId}";
-            var response = await _client.GetStringAsync(link);
-            return JsonSerializer.Deserialize<long>(response);
-        }
+  public async Task<List<string>> GetPermissions(long accountId)
+  {
+    var accountPermissionsLink = $"{_urls.AccountsServiceUrl}/internal/account-permissions/{accountId}";
+    var response = await _client.GetStringAsync(accountPermissionsLink);
 
-        public async Task<Employee> GetEmployeeAsync(string corporateEmail)
-        {
-            var link = $"{_urls.EmployeesServiceUrl}/internal/get-employee?corporateEmail={corporateEmail}";
-            var response = await _client.GetStringAsync(link);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<Employee>(response);
-        }
-    }
+    return JsonSerializer.Deserialize<List<string>>(response);
+  }
+
+  public async Task<long> GetTenantId(long accountId)
+  {
+    var link = $"{_urls.AccountsServiceUrl}/internal/get-tenantId-by-accountId/{accountId}";
+    var response = await _client.GetStringAsync(link);
+
+    return JsonSerializer.Deserialize<long>(response);
+  }
+
+  public async Task<Employee> GetEmployeeAsync(string corporateEmail)
+  {
+    var link = $"{_urls.EmployeesServiceUrl}/internal/get-employee?corporateEmail={corporateEmail}";
+    var response = await _client.GetStringAsync(link);
+
+    return Newtonsoft.Json.JsonConvert.DeserializeObject<Employee>(response);
+  }
 }

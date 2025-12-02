@@ -1,9 +1,8 @@
 using DataAccess.Models;
 
-namespace DataAccess.Queries
+namespace DataAccess.Queries;
+
+public interface IFindUserQuery
 {
-    public interface IFindUserQuery
-    {
-        Task<User?> FindUserByCorporateEmailAsync(string corporateEmail);
-    }
+  Task<User?> FindUserByCorporateEmailAsync(string corporateEmail);
 }

@@ -1,10 +1,8 @@
 namespace Api.Services.Models;
 
-public readonly struct PasswordChangeModel
+public readonly struct PasswordSetModel
 {
   public string CorporateEmail { get; init; }
-
-  public string PasswordResetToken { get; init; }
 
   public string NewPassword { get; init; }
 }
