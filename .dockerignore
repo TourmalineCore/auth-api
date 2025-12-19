@@ -1,43 +1,64 @@
-# Git files
+**/.classpath
+**/.dockerignore
+**/.env
 **/.git
 **/.gitignore
-
-# Build results
-**/[Bb]in/
-**/[Oo]bj/
-
-# Visual Studio 2015 cache/options directory
-**/.vs/
-**/.vs
-**/.vscode
-**/*.*proj.user
-
-# Settings for local pgadmin
-**/.pgadmin4/
-
-# Docker
-**/Dockerfile*
-**/docker-compose*
-**/.dockerignore
-
-# CI 
-WbAnalyticsApi/ci/
-**/.gitlab-ci.yml
-
-# Other
-**/.classpath
-**/.env
 **/.project
 **/.settings
 **/.toolstarget
+**/.vs
+**/.vscode
+**/*.*proj.user
 **/*.dbmdl
 **/*.jfm
 **/azds.yaml
+**/bin
 **/charts
+**/docker-compose*
+**/Dockerfile*
 **/node_modules
 **/npm-debug.log
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
 LICENSE
+README.md
+!**/.gitignore
+!.git/HEAD
+!.git/config
+!.git/packed-refs
+!.git/refs/heads/**
+
+# we don't need tests and their related code in production
+**/*Tests.cs
+**/*TestsRelated.cs
+
+**/bin/*
+**/obj/*
+**/.vs/*
+**/.vscode/*
+**.user
+**.http
+
+**/appsettings.**
+# need to include these files for tests execution in docker compose even though these maigh not be used in prod
+!**/appsettings.json
+!**/appsettings.MockForPullRequest.json
+
+**/Dockerfile
+**/lib/*
+
+.devcontainer/
+.github/
+target/
+ci/
+e2e/
+
+.dockerignore
+.editorconfig
+.gitattributes
+.gitignore
+docker-compose.yml
+LICENSE
+pgAdmin.json
 README.md
