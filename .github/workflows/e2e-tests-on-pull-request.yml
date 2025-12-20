@@ -58,10 +58,6 @@ jobs:
         env:
           "AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "malfoy@tourmalinecore.com"
           "AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "Serpens1!"
-          "AUTH_SECOND_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "chang@tourmalinecore.com"
-          "AUTH_SECOND_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "Reparo1!"
-          "AUTH_LOGIN_WITHOUT_PERMISSIONS": "goyle@tourmalinecore.com"
-          "AUTH_PASSWORD_WITHOUT_PERMISSIONS": "Crucio1!"
           "AUTH_API_ROOT_URL": "http://localhost:30090/api/auth"
           "API_ROOT_URL": "http://localhost:30090/api/auth"
           "SHOULD_USE_FAKE_EXTERNAL_DEPENDENCIES": "false"
