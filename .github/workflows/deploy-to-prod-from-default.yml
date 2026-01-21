@@ -20,7 +20,7 @@ jobs:
       - name: Deploy
         # Database connection var used in quotes because without them only part of connection string will be used
         run: |
-            helmfile apply --suppress-diff --namespace ${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }} -f Api/ci/helmfile.yaml \
+            helmfile cache cleanup && helmfile apply --suppress-diff --namespace ${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }} -f Api/ci/helmfile.yaml \
             --state-values-set image.tag=sha-${{ github.sha }} \
             --state-values-set ingress.hostname=${{ secrets.INNER_CIRCLE_PROD_HOSTNAME }} \
             --state-values-set extraSecretEnvVars.ConnectionStrings__DefaultConnection="${{ secrets.INNER_CIRCLE_PROD_AUTH_DB_CONNECTION_STRING }}" \
