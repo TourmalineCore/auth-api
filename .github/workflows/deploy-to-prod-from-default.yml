@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - feature/**
 
 jobs:
   docker-build-and-push:
@@ -12,34 +11,24 @@ jobs:
 
   deploy-to-prod:
     needs: [docker-build-and-push]
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Create default global .kube/config file
-        run: |
-          cd $HOME
-          mkdir .kube
-          echo "${{ secrets.INNER_CIRCLE_PROD_KUBECONFIG }}" > .kube/config
-
       - name: Deploy
-        uses: helmfile/helmfile-action@v1.9.0
-        with:
-          helmfile-version: 'v0.164.0'
-          helm-version: 'v3.18.0'
-          helmfile-args: >
-            apply --suppress-diff --namespace ${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }} -f Api/ci/helmfile.yaml
-            --state-values-set image.tag=sha-${{ github.sha }} 
-            --state-values-set ingress.hostname=${{ secrets.INNER_CIRCLE_PROD_HOSTNAME }}
-            --state-values-set extraSecretEnvVars.ConnectionStrings__DefaultConnection=${{ secrets.INNER_CIRCLE_PROD_AUTH_DB_CONNECTION_STRING }}
-            --state-values-set extraSecretEnvVars.AuthenticationOptions__PublicSigningKey=${{ secrets.INNER_CIRCLE_PROD_PUBLIC_SIGNING_KEY }}
-            --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey=${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}         
-            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl=${{ secrets.INNER_CIRCLE_PROD_MAIL_SERVICE_URL }}
-            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl=${{ secrets.INNER_CIRCLE_PROD_AUTH_UI_SERVICE_URL }}
-            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl=${{ secrets.INNER_CIRCLE_PROD_ACCOUNTS_SERVICE_URL }}
-            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl=${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }}
-            helmfile-auto-init: "false"
+        # Database connection var used in quotes because without them only part of connection string will be used
+        run: |
+            helmfile apply --suppress-diff --namespace ${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }} -f Api/ci/helmfile.yaml \
+            --state-values-set image.tag=sha-${{ github.sha }} \
+            --state-values-set ingress.hostname=${{ secrets.INNER_CIRCLE_PROD_HOSTNAME }} \
+            --state-values-set extraSecretEnvVars.ConnectionStrings__DefaultConnection="${{ secrets.INNER_CIRCLE_PROD_AUTH_DB_CONNECTION_STRING }}" \
+            --state-values-set extraSecretEnvVars.AuthenticationOptions__PublicSigningKey=${{ secrets.INNER_CIRCLE_PROD_PUBLIC_SIGNING_KEY }} \
+            --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey=${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }} \ 
+            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl=${{ secrets.INNER_CIRCLE_PROD_MAIL_SERVICE_URL }} \
+            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl=${{ secrets.INNER_CIRCLE_PROD_AUTH_UI_SERVICE_URL }} \
+            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl=${{ secrets.INNER_CIRCLE_PROD_ACCOUNTS_SERVICE_URL }} \
+            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl=${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }} > /dev/null 2>&1
 
   run-e2e-tests:
     uses: ./.github/workflows/.reusable-e2e-tests-against-prod.yml
