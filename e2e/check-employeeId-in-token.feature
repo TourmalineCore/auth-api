@@ -9,12 +9,12 @@ Scenario: Check employeeId in token
 
     * def jsUtils = read('./js-utils.js')
     * def apiRootUrl = jsUtils().getEnvVariable('API_ROOT_URL')
-    * def authLogin = jsUtils().getEnvVariable('AUTH_LOGIN')
-    * def authPassword = jsUtils().getEnvVariable('AUTH_PASSWORD')
+    * def authLogin = jsUtils().getEnvVariable('AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS')
+    * def authPassword = jsUtils().getEnvVariable('AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS')
     
     # Authentication
     Given url apiRootUrl
-    And path '/auth/login'
+    And path '/login'
     And request
     """
     {

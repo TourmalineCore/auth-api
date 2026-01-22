@@ -1,0 +1,63 @@
+name: E2E Tests in PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # this is needed to wait for the new docker image to be build and published to the registry
+  # so that we can use the image to run the service of the needed commit related version as part of local-env
+  # the idea is taken from here https://stackoverflow.com/a/71489231
+  docker-build-and-push:
+    uses: ./.github/workflows/.reusable-docker-build-and-push.yml
+
+  e2e-test-against-local-env:
+    runs-on: ubuntu-24.04
+    needs: [docker-build-and-push]
+    steps:
+      - name: Checkout local-env
+        uses: actions/checkout@v4
+        with:
+          repository: TourmalineCore/inner-circle-local-env
+
+      - name: Deploy Local Env to Kind k8s
+        uses: devcontainers/ci@v0.3
+        with:
+          cacheFrom: ghcr.io/tourmalinecore/inner-circle-local-env-devcontainer
+          runCmd: |
+            # we need to override "latest" image tag of ui inside local-env to run e2e against the current commit ui version and not against latest from master
+            # We tried to use yq to change the image tag, but in the values files for helmfile we have non-yaml code that yq can`t parse or ignore
+            # so for that reason we use Stream EDitor which can find needed string using regular expressions and change it to a new value
+            # The -i flag is needed to write new image tag directly to values file
+            sed -i "0,/tag:.*/s//tag: \"sha-${{ github.event.pull_request.head.sha }}\"/" deploy/values-auth-api.yaml.gotmpl
+            # we need to override "latest" ref of service chart inside local-env to run tests against the current commit service chart version and not against latest from master
+            sed -i "0,/git+https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git?ref=.*/s//git+https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git?ref=${{ github.event.pull_request.head.sha }}/" deploy/helmfile.yaml
+            
+            sed -i "0,/git::https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git@\/Api\/ci\/values.yaml?ref=.*/s//git::https:\/\/github.com\/TourmalineCore\/${{ github.event.repository.name }}.git@\/Api\/ci\/values.yaml?ref=${{ github.event.pull_request.head.sha }}/" deploy/helmfile.yaml
+            kind create cluster --name inner-circle --config kind-local-config.yaml --kubeconfig ./.inner-circle-cluster-kubeconfig
+            # we need to properly expose KUBECONFIG as an absolute path, pwd prints current working directory path
+            export KUBECONFIG=$(pwd)/.inner-circle-cluster-kubeconfig
+            helmfile --environment local --namespace local -f deploy/helmfile.yaml apply
+          push: never
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download Karate JAR
+        run: |
+          curl -L https://github.com/karatelabs/karate/releases/download/v1.5.1/karate-1.5.1.jar -o karate.jar
+      - name: Run E2E Tests Against Local Env
+        run: |
+          java -jar karate.jar .
+        env:
+          "AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS": "malfoy@tourmalinecore.com"
+          "AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "Serpens1!"
+          "AUTH_API_ROOT_URL": "http://localhost:30090/api/auth"
+          "API_ROOT_URL": "http://localhost:30090/api/auth"
+          "SHOULD_USE_FAKE_EXTERNAL_DEPENDENCIES": "false"
