@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - feature/**
 
 jobs:
   docker-build-and-push:
