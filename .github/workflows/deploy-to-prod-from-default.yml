@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/**
 
 jobs:
   docker-build-and-push:
@@ -20,6 +21,7 @@ jobs:
         # Database connection var used in quotes because without them only part of connection string will be used
         run: |
             helmfile cache cleanup && helmfile apply --suppress-diff --namespace "${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }}" -f Api/ci/helmfile.yaml \
+            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.DEV_MAIL_SERVICE_URL }}" \
             --state-values-set image.tag=sha-${{ github.sha }} \
             --state-values-set ingress.hostname="${{ secrets.INNER_CIRCLE_PROD_HOSTNAME }}" \
             --state-values-set extraSecretEnvVars.ConnectionStrings__DefaultConnection="${{ secrets.INNER_CIRCLE_PROD_AUTH_DB_CONNECTION_STRING }}" \
@@ -27,7 +29,6 @@ jobs:
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" \ 
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl="${{ secrets.INNER_CIRCLE_PROD_AUTH_UI_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl="${{ secrets.INNER_CIRCLE_PROD_ACCOUNTS_SERVICE_URL }}" \
-            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.DEV_MAIL_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl="${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }}" > /dev/null 2>&1
 
   run-e2e-tests:
