@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - feature/**
+
 jobs:
   docker-build-and-push:
     uses: ./.github/workflows/.reusable-docker-build-and-push.yml
@@ -17,7 +17,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy
-        # Database connection var used in quotes because without them only part of connection string will be used
+        # NOTE: PublicSigningKey and PrivateSigningKey should be placed in the end because for some reason, if we put them upper
+        # then they will break other vars
+        # Also we use quotes because without them some vars (DB Connection) break down
         run: |
             helmfile cache cleanup && helmfile apply --suppress-diff --namespace "${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }}" -f Api/ci/helmfile.yaml \
             --state-values-set image.tag=sha-${{ github.sha }} \
@@ -25,7 +27,7 @@ jobs:
             --state-values-set extraSecretEnvVars.ConnectionStrings__DefaultConnection="${{ secrets.INNER_CIRCLE_PROD_AUTH_DB_CONNECTION_STRING }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl="${{ secrets.INNER_CIRCLE_PROD_AUTH_UI_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl="${{ secrets.INNER_CIRCLE_PROD_ACCOUNTS_SERVICE_URL }}" \
-            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.DEV_MAIL_SERVICE_URL }}" \
+            --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.INNER_CIRCLE_PROD_MAIL_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl="${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PublicSigningKey="${{ secrets.INNER_CIRCLE_PROD_PUBLIC_SIGNING_KEY }}" \
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" > /dev/null 2>&1
