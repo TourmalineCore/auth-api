@@ -30,7 +30,8 @@ jobs:
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.INNER_CIRCLE_PROD_MAIL_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl="${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PublicSigningKey="${{ secrets.INNER_CIRCLE_PROD_PUBLIC_SIGNING_KEY }}" \
-            --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" > /dev/null 2>&1
+            --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" \
+            > "/var/log/inner-circle/deploy/$(date +%F)-${{ github.event.repository.name }}-run-${{ github.run_id }}-job-${{ job.check_run_id }}.log" 2>&1
 
   run-e2e-tests:
     uses: ./.github/workflows/.reusable-e2e-tests-against-prod.yml
