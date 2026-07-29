@@ -21,7 +21,7 @@ jobs:
         # then they will break other vars
         # Also we use quotes because without them some vars (DB Connection) break down
         run: |
-            helmfile cache cleanup && helmfile apply --suppress-diff --namespace "${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }}" -f Api/ci/helmfile.yaml \
+            helmfile cache cleanup && helmfile apply --namespace "${{ secrets.INNER_CIRCLE_PROD_NAMESPACE }}" -f Api/ci/helmfile.yaml \
             --state-values-set image.tag="sha-${{ github.sha }}" \
             --state-values-set ingress.hostname="${{ secrets.INNER_CIRCLE_PROD_HOSTNAME }}" \
             --state-values-set extraSecretEnvVars.ConnectionStrings__DefaultConnection="${{ secrets.INNER_CIRCLE_PROD_AUTH_DB_CONNECTION_STRING }}" \
@@ -30,7 +30,8 @@ jobs:
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.INNER_CIRCLE_PROD_MAIL_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl="${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PublicSigningKey="${{ secrets.INNER_CIRCLE_PROD_PUBLIC_SIGNING_KEY }}" \
-            --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" > /dev/null 2>&1
+            --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" > "/var/log/inner-circle/deploy/$(date +%F)-${{ github.event.repository.name }}-run-${{ github.run_id }}-job-${{ job.check_run_id }}.log" 2>&1
+            # on the last line where we redirect output we don't add a line break for convenience because it is easy to make it wrong having an extra space after \ symbol which leads to exposure of logs to the public pipeline logs instead of the needed private file on a runner
 
   run-e2e-tests:
     uses: ./.github/workflows/.reusable-e2e-tests-against-prod.yml

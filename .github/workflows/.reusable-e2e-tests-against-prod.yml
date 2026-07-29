@@ -5,7 +5,9 @@ on:
 
 jobs:
   e2e-test-against-prod:
-    runs-on: ubuntu-24.04
+    # need to run on our own runners that we have access to the logs later on our servers
+    # otherwise, if we use shared runners they store log files in their VMs which we cannot access
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
 
@@ -21,9 +23,11 @@ jobs:
 
     - name: Run E2E Tests Against Local Env
       run: |
-        # Learn more about '> /dev/null 2>&1': https://stackoverflow.com/a/42919998
+        # Redirecting logs to a file on the server
+        # Example of a filename: "/var/log/inner-circle/e2e/2026-07-22-inner-circle-time-api-run-27459153975-job-81169369662.log"
+        # Learn more about '2>&1': https://stackoverflow.com/a/42919998
         # In essence it merges output and error streams and doesn't show errors in the terminal to avoid leakage of secrets in the pipeline
-        java -jar karate.jar . > /dev/null 2>&1
+        java -jar karate.jar . > "/var/log/inner-circle/e2e/$(date +%F)-${{ github.event.repository.name }}-run-${{ github.run_id }}-job-${{ job.check_run_id }}.log" 2>&1
       env:
         "AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS": ${{ secrets.INNER_CIRCLE_PROD_AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS }}
         "AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": ${{ secrets.INNER_CIRCLE_PROD_AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS }}
