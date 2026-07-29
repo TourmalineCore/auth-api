@@ -22,4 +22,5 @@ releases:
           InnerCircleServiceUrls__MailServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl }}"
           InnerCircleServiceUrls__AuthUIServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__AuthUIServiceUrl }}"
           InnerCircleServiceUrls__AccountsServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__AccountsServiceUrl }}"
+          CorsOptions__AllowedOrigins: "{{ .StateValues.extraSecretEnvVars.CorsOptions__AllowedOrigins }}"
           InnerCircleServiceUrls__EmployeesServiceUrl: "{{ .StateValues.extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl }}"
