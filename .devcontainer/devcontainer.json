@@ -24,5 +24,6 @@
 	},
 	"containerEnv": {
 		"API_ROOT_URL": "http://localhost:6503/api",
+		"CORS_ALLOWED_ORIGINS": "*"
 	}
 }

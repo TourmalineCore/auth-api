@@ -30,6 +30,7 @@ jobs:
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__MailServiceUrl="${{ secrets.INNER_CIRCLE_PROD_MAIL_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.InnerCircleServiceUrls__EmployeesServiceUrl="${{ secrets.INNER_CIRCLE_PROD_EMPLOYEES_SERVICE_URL }}" \
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PublicSigningKey="${{ secrets.INNER_CIRCLE_PROD_PUBLIC_SIGNING_KEY }}" \
+            --state-values-set extraSecretEnvVars.CorsOptions__AllowedOrigins="${{ secrets.INNER_CIRCLE_PROD_BASE_URL }}" \
             --state-values-set extraSecretEnvVars.AuthenticationOptions__PrivateSigningKey="${{ secrets.INNER_CIRCLE_PROD_PRIVATE_SIGNING_KEY }}" > "/var/log/inner-circle/deploy/$(date +%F)-${{ github.event.repository.name }}-run-${{ github.run_id }}-job-${{ job.check_run_id }}.log" 2>&1
             # on the last line where we redirect output we don't add a line break for convenience because it is easy to make it wrong having an extra space after \ symbol which leads to exposure of logs to the public pipeline logs instead of the needed private file on a runner
 

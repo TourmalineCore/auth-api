@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Api;
 using Api.Services;
 using Api.Services.Callbacks;
 using Api.Services.Options;
@@ -21,7 +22,6 @@ var configuration = builder.Configuration;
 const string defaultConnection = "DefaultConnection";
 
 builder.Services.AddControllers();
-builder.Services.AddCors();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -92,7 +92,7 @@ builder.Services
   .AddRefreshConfidenceInterval()
   .AddLogout()
   .AddUserCredentialsValidator<UserCredentialsValidator>()
-  .WithUserClaimsProvider<UserClaimsProvider>(UserClaimsProvider.PermissionsClaimType);
+  .WithUserClaimsProvider<Api.Services.Users.UserClaimsProvider>(Api.Services.Users.UserClaimsProvider.PermissionsClaimType);
 
 builder.Services.AddIdentityCore<User>().AddDefaultTokenProviders();
 
@@ -127,12 +127,13 @@ else
 
 var app = builder.Build();
 
+var corsOptions = configuration.GetSection(nameof(CorsOptions)).Get<CorsOptions>();
+
 app.UseCors(
   corsPolicyBuilder => corsPolicyBuilder
-    .AllowAnyHeader()
-    .SetIsOriginAllowed(host => true)
-    .AllowAnyMethod()
-    .AllowAnyOrigin()
+      .WithOrigins(corsOptions!.AllowedOrigins)
+      .WithMethods("GET", "POST", "DELETE")
+      .WithHeaders("Authorization", "Content-Type")
 );
 
 if (app.Environment.IsEnvironment("Debug"))

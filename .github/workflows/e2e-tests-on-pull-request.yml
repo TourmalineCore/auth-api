@@ -60,4 +60,5 @@ jobs:
           "AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS": "Serpens1!"
           "AUTH_API_ROOT_URL": "http://localhost:30090/api/auth"
           "API_ROOT_URL": "http://localhost:30090/api/auth"
+          "CORS_ALLOWED_ORIGINS": "*"
           "SHOULD_USE_FAKE_EXTERNAL_DEPENDENCIES": "false"
