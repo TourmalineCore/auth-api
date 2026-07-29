@@ -8,14 +8,13 @@ Feature: CORS Settings
   Scenario: Verify API CORS settings
 
     * def jsUtils = read('./js-utils.js')
-    * def authApiRootUrl = jsUtils().getEnvVariable('AUTH_API_ROOT_URL')
     * def apiRootUrl = jsUtils().getEnvVariable('API_ROOT_URL')
     * def authLogin = jsUtils().getEnvVariable('AUTH_FIRST_TENANT_LOGIN_WITH_ALL_PERMISSIONS')
     * def authPassword = jsUtils().getEnvVariable('AUTH_FIRST_TENANT_PASSWORD_WITH_ALL_PERMISSIONS')
     * def corsAllowedOrigins = jsUtils().getEnvVariable('CORS_ALLOWED_ORIGINS')
 
     # Send CORS preflight OPTIONS request like UI does
-    Given url authApiRootUrl
+    Given url apiRootUrl
     And path '/login'
     And request
     """
